@@ -4,7 +4,7 @@ define('APPNAME', 'BurgerRiza');
 if (isset($_POST['logOut'])) {
   session_unset();
   session_destroy();
-  // header('Location:sign-in.php');
+  header('Location:index.php');
 }
 ?>
 
@@ -26,7 +26,7 @@ if (isset($_POST['logOut'])) {
 
     <ul class="flex items-center gap-14 font-bold text-lg">
       <li>
-        Hello <?php echo  $_SESSION['userName'] ?? "gust" ?>
+        Hello <?php echo  $_SESSION['userName'] ?? "guest" ?>
       </li>
       <li>
         <a href="#" class="text-white">menu</a>

@@ -54,10 +54,14 @@ if (isset($_GET['id'])) {
       <p>created_at: <?php echo htmlspecialchars(date($burger['created_at'])) ?></p>
 
 
-      <form action="details.php" method="POST">
-        <input type="hidden" name="id_to_delete" value="<?php echo $burger['id'] ?>">
-        <input type="submit" name="delete" value="Delete" class="p-4 text-xl font-semibold mt-2 bg-red-500 rounded-xl text-white">
-      </form>
+      <?php if (!empty($_SESSION['userName']) && !empty($_SESSION['cUserEmail'])) { ?>
+        <?php if ($burger['email'] === $_SESSION['cUserEmail']) { ?>
+          <form action="details.php" method="POST">
+            <input type="hidden" name="id_to_delete" value="<?php echo $burger['id'] ?>">
+            <input type="submit" name="delete" value="Delete" class="p-4 text-xl font-semibold mt-2 bg-red-500 rounded-xl text-white">
+          </form>
+        <?php } ?>
+      <?php } ?>
     </div>
 
   <?php else : ?>
