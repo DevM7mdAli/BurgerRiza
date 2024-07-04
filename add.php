@@ -2,7 +2,7 @@
 session_start();
 require 'config/connection.php';
 
-$errors = array('email' => '', 'BurgerName' => '', 'Extras' => '');
+$errors = array('BurgerName' => '', 'Extras' => '');
 $burName = $Extras = '';
 if (isset($_POST['submit']) && !empty($_SESSION['userName'])) {
   if (empty($_POST['BurgerName'])) {
@@ -23,13 +23,12 @@ if (isset($_POST['submit']) && !empty($_SESSION['userName'])) {
   }
 
   if (!array_filter($errors)) {
-    $email = mysqli_real_escape_string($con, $_POST['email']);
     $burName = mysqli_real_escape_string($con, $_POST['BurgerName']);
     $Extras = mysqli_real_escape_string($con, $_POST['Extras']);
 
     //sql to insert
 
-    $sql = "INSERT INTO burgers (email , burgerName , Extras) VALUES ('" . $_SESSION['cUserEmail'] . "' , '$burName' , '$Extras')";
+    $sql = "INSERT INTO burgers (email , burgerName , Extras , user_added_id) VALUES ('" . $_SESSION['cUserEmail'] . "' , '$burName' , '$Extras' , '" . $_SESSION['cUserId'] . "')";
 
     if (mysqli_query($con, $sql)) {
       header('Location:index.php');
@@ -60,9 +59,6 @@ if (isset($_POST['submit']) && !empty($_SESSION['userName'])) {
       </form>
       <div class="py-4 text-red-400 flex flex-col">
         <div>
-          <?php echo $errors['email'] ?>
-        </div>
-        <div>
           <?php echo $errors['BurgerName'] ?>
         </div>
         <div>
@@ -76,12 +72,14 @@ if (isset($_POST['submit']) && !empty($_SESSION['userName'])) {
     const inputs = [{
         "type": "text",
         "name": "Burger name",
-        "code": "BurgerName"
+        "code": "BurgerName",
+        "value": "<?php echo $burName ?>"
 
       },
       {
         "type": "text",
-        "name": "Extras"
+        "name": "Extras",
+        "value": "<?php echo $Extras ?>"
       },
     ]
 
@@ -94,6 +92,7 @@ if (isset($_POST['submit']) && !empty($_SESSION['userName'])) {
       const inField = document.createElement("input")
       inField.className = "border-2 p-1 text-xl w-full"
       inField.placeholder = input.name
+      inField.value = input.value
       inField.name = input.code ? input.code : input.name
       inField.id = inField.name
       inField.type = input.type

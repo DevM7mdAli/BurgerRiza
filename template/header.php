@@ -18,7 +18,7 @@ if (isset($_POST['logOut'])) {
 
 <body class="bg-orange-50">
   <!-- navbar start  -->
-  <nav id="nav" class="sticky flex justify-between  py-5  px-4  bg-red-500 w-full h-full top-0 left-0 z-30 ">
+  <nav id="nav" class="sticky flex justify-between  py-5  px-4  bg-red-500 w-full top-0 left-0 z-30 ">
     <a href="index.php" class="flex items-center font-bold">
       <img src="assets/Logo.png" alt="Logo" class="w-12 h-12">
       <?php echo APPNAME ?>
