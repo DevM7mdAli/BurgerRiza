@@ -16,11 +16,19 @@ if (isset($_POST['submit'])) {
 
   if ($pwd === $cPwd) {
     $enPwd = md5($pwd);
-    $sql = "INSERT INTO user (email , user_password , user_name , first_name , last_name ) VALUES ('$email' , '$enPwd' , '$username' , '$fName' , '$lName')";
-    if (mysqli_query($con, $sql)) {
-      header('Location:sign-in.php');
+    $sql = "INSERT INTO user (email , user_password , user_name , first_name , last_name ) VALUES ( ? , ? , ? , ? , ?)";
+
+    if ($prStmt = mysqli_prepare($con, $sql)) {
+      mysqli_stmt_bind_param($prStmt, 'sssss', $email, $enPwd, $username, $fName, $lName);
+      if (mysqli_stmt_execute($prStmt)) {
+        mysqli_stmt_close($prStmt);
+        mysqli_close($con);
+        header('Location:sign-in.php');
+      } else {
+        echo 'error in the prepare statement ' . mysqli_error($con);
+      }
     } else {
-      echo "don't waste time";
+      echo 'error in the connection ' . mysqli_error($con);
     }
   }
 }

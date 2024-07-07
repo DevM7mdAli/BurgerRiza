@@ -4,8 +4,12 @@ session_start();
 require 'config/connection.php';
 
 // fetch all burgerz 
+if (!empty($_SESSION['cUserId'])) {
 
-$query = 'SELECT * FROM burgers ORDER BY created_at';
+  $query = "SELECT * FROM burgers WHERE user_added_id={$_SESSION['cUserId']}  ORDER BY created_at";
+} else {
+  $query = "SELECT * FROM burgers ORDER BY created_at";
+}
 
 $result = mysqli_query($con, $query);
 
@@ -29,7 +33,7 @@ mysqli_close($con);
 
 
 <div class="text-3xl text-center p-12">
-  main menu
+  <h1 class="pb-8 font-bold">main menu</h1>
 
   <div class="flex flex-row justify-around items-center flex-wrap gap-4" id="theBody">
     <?php foreach ($burgerz as $burger) : ?>
@@ -40,6 +44,7 @@ mysqli_close($con);
             <div class="px-2"> <?php echo htmlspecialchars($Extra) ?> </div>
           <?php  } ?>
         </div>
+        <h1 id="burgerName"> Burger price: <?php echo htmlspecialchars($burger['burger_price']) . "$" ?> </h1>
 
         <div class="text-red-500 border-t-4">
           <a href="details.php?id=<?php echo $burger['id'] ?>">more info</a>

@@ -8,11 +8,21 @@ if (isset($_POST['submit'])) {
   $enPwd = md5($password);
   $error;
 
-  $sql = "SELECT * FROM user WHERE email='$email' AND user_password='$enPwd'";
+  $sql = "SELECT * FROM user WHERE email = ? AND user_password = ?";
 
-  $result = mysqli_query($con, $sql);
-
-  $user = mysqli_fetch_assoc($result);
+  if ($prStmt = mysqli_prepare($con, $sql)) {
+    mysqli_stmt_bind_param($prStmt, 'ss', $email, $enPwd);
+    if (mysqli_stmt_execute($prStmt)) {
+      $result = mysqli_stmt_get_result($prStmt);
+      $user = mysqli_fetch_assoc($result);
+      mysqli_stmt_close($prStmt);
+      mysqli_close($con);
+    } else {
+      echo 'error in statement' . mysqli_error($con);
+    }
+  } else {
+    echo 'error in connection' . mysqli_error($con);
+  }
 
   if ($user) {
     $_SESSION['userName'] = $user['user_name'];
@@ -22,9 +32,6 @@ if (isset($_POST['submit'])) {
   } else {
     $error = "failed to log in with these infos:<br /> email : $email <br />  password : $password";
   }
-
-  mysqli_free_result($result);
-  mysqli_close($con);
 }
 
 

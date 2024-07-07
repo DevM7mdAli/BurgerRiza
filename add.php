@@ -2,9 +2,10 @@
 session_start();
 require 'config/connection.php';
 
-$errors = array('BurgerName' => '', 'Extras' => '');
-$burName = $Extras = '';
+$errors = array('BurgerName' => '', 'price' => '', 'Extras' => '');
+$burName = $price = $Extras =  '';
 if (isset($_POST['submit']) && !empty($_SESSION['userName'])) {
+
   if (empty($_POST['BurgerName'])) {
     $errors['BurgerName'] = "burger name required" . "<br />";
   } else {
@@ -13,27 +14,46 @@ if (isset($_POST['submit']) && !empty($_SESSION['userName'])) {
       $errors['BurgerName'] = "burger name must be letters only" . "<br />";
     }
   }
+
   if (empty($_POST['Extras'])) {
     $errors['Extras'] = "Extras required" . "<br />";
   } else {
     $Extras = htmlspecialchars($_POST['Extras']);
     if (!preg_match('/^([a-zA-Z\s]+)(,\s*[a-zA-Z\s]*)*$/', $Extras)) {
-      $errors['Extras'] = 'Title must be separated by comma' . "<br />";
+      $errors['Extras'] = 'extras must be separated by comma' . "<br />";
+    }
+  }
+
+  if (empty($_POST['price'])) {
+    $errors['price'] = "price required" . "<br />";
+  } else {
+    $price = htmlspecialchars($_POST['price']);
+    if (!preg_match('/(0|([1-9][0-9]*))(\\.[0-9]+)?/', $price)) {
+      $errors['price'] = 'price must be a number' . "<br />";
+    } else {
+      if ($price <= 0) {
+        $errors['price'] = 'price must be a positive' . "<br />";
+      }
     }
   }
 
   if (!array_filter($errors)) {
     $burName = mysqli_real_escape_string($con, $_POST['BurgerName']);
+    $price = mysqli_real_escape_string($con, $_POST['price']);
     $Extras = mysqli_real_escape_string($con, $_POST['Extras']);
 
     //sql to insert
+    $sql = "INSERT INTO burgers (email , burgerName , burger_price , Extras , user_added_id) VALUES (? , ? , ? , ? , ?)";
 
-    $sql = "INSERT INTO burgers (email , burgerName , Extras , user_added_id) VALUES ('" . $_SESSION['cUserEmail'] . "' , '$burName' , '$Extras' , '" . $_SESSION['cUserId'] . "')";
-
-    if (mysqli_query($con, $sql)) {
-      header('Location:index.php');
+    if ($prStmt = mysqli_prepare($con, $sql)) {
+      mysqli_stmt_bind_param($prStmt, "ssdsi", $_SESSION['cUserEmail'], $burName, $price, $Extras, $_SESSION['cUserId']);
+      if (mysqli_stmt_execute($prStmt)) {
+        header('Location:index.php');
+      } else {
+        echo 'error in the prepare statement ' . mysqli_error($con);
+      }
     } else {
-      echo 'error in the connection ' . mysqli_error($$con);
+      echo 'error in the connection ' . mysqli_error($con);
     }
   }
 } // end of 
@@ -62,6 +82,9 @@ if (isset($_POST['submit']) && !empty($_SESSION['userName'])) {
           <?php echo $errors['BurgerName'] ?>
         </div>
         <div>
+          <?php echo $errors['price'] ?>
+        </div>
+        <div>
           <?php echo $errors['Extras'] ?>
         </div>
       </div>
@@ -73,13 +96,19 @@ if (isset($_POST['submit']) && !empty($_SESSION['userName'])) {
         "type": "text",
         "name": "Burger name",
         "code": "BurgerName",
-        "value": "<?php echo $burName ?>"
+        "value": "<?php echo htmlspecialchars($burName) ?>"
+
+      },
+      {
+        "type": "text",
+        "name": "price",
+        "value": "<?php echo htmlspecialchars($price) ?>"
 
       },
       {
         "type": "text",
         "name": "Extras",
-        "value": "<?php echo $Extras ?>"
+        "value": "<?php echo htmlspecialchars($Extras) ?>"
       },
     ]
 
