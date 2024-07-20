@@ -11,15 +11,23 @@ if (isset($_POST['submit'])) {
   $fName = mysqli_real_escape_string($con, $_POST['FName']);
   $lName = mysqli_real_escape_string($con, $_POST['LName']);
   $pwd = mysqli_real_escape_string($con, $_POST['pwd']);
+  $accountType = mysqli_real_escape_string($con, $_POST['type']);
   $cPwd = mysqli_real_escape_string($con, $_POST['confirmPassword']);
 
 
   if ($pwd === $cPwd) {
     $enPwd = md5($pwd);
-    $sql = "INSERT INTO user (email , user_password , user_name , first_name , last_name ) VALUES ( ? , ? , ? , ? , ?)";
+
+
+    $sql = "INSERT INTO user (email , user_password , account_type , user_name , first_name , last_name ) VALUES ( ? , ? , ? , ? , ? , ?)";
 
     if ($prStmt = mysqli_prepare($con, $sql)) {
-      mysqli_stmt_bind_param($prStmt, 'sssss', $email, $enPwd, $username, $fName, $lName);
+      if (strtoupper($accountType) === "R") {
+        $type = "R";
+      } else {
+        $type = "C";
+      }
+      mysqli_stmt_bind_param($prStmt, 'ssssss', $email, $enPwd, $type, $username, $fName, $lName);
       if (mysqli_stmt_execute($prStmt)) {
         mysqli_stmt_close($prStmt);
         mysqli_close($con);
@@ -56,23 +64,29 @@ if (isset($_POST['submit'])) {
 
     <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST" class="pb-12 flex flex-col justify-center items-center w-1/2 gap-y-4">
       <div>
+          <input type="radio" id="Restaurant" name="type" value="R" required>
+          <label for="Restaurant">restaurant</label>
+          <input type="radio" id="Customers" name="type" value="C">
+          <label for="Customers">customer</label>
+        <br>
+
         <label for="Email">Email</label>
-        <input type="email" class="border-2 p-1 text-xl w-full" name="email" id="Email" value="">
+        <input type="email" class="border-2 p-1 text-xl w-full" name="email" id="Email" value="" required>
 
         <label for="UserName">UserName</label>
-        <input type="text" class="border-2 p-1 text-xl w-full" name="userName" id="UserName">
+        <input type="text" class="border-2 p-1 text-xl w-full" name="userName" id="UserName" required>
 
         <label for="FirstName">First name</label>
-        <input type="text" class="border-2 p-1 text-xl w-full" name="FName" id="FirstName">
+        <input type="text" class="border-2 p-1 text-xl w-full" name="FName" id="FirstName" required>
 
         <label for="LastName">Last name</label>
-        <input type="text" class="border-2 p-1 text-xl w-full" name="LName" id="LastName">
+        <input type="text" class="border-2 p-1 text-xl w-full" name="LName" id="LastName" required>
 
         <label for="PassWord">Password</label>
-        <input type="password" class="border-2 p-1 text-xl w-full" name="pwd" id="PassWord">
+        <input type="password" class="border-2 p-1 text-xl w-full" name="pwd" id="PassWord" required>
 
         <label for="ConfirmPass">Confirm password</label>
-        <input type="password" class="border-2 p-1 text-xl w-full" name="confirmPassword" id="ConfirmPass">
+        <input type="password" class="border-2 p-1 text-xl w-full" name="confirmPassword" id="ConfirmPass" required>
       </div>
 
 

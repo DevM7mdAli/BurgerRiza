@@ -125,6 +125,7 @@ if (isset($_POST['submit']) && !empty($_SESSION['userName'])) {
       inField.name = input.code ? input.code : input.name
       inField.id = inField.name
       inField.type = input.type
+      inField.required = true
       form.prepend(inField)
       form.prepend(label)
     }

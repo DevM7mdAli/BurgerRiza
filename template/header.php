@@ -6,6 +6,16 @@ if (isset($_POST['logOut'])) {
   session_destroy();
   header('Location:index.php');
 }
+$navList = [
+  [
+    'name' => "Add to your menu",
+    'url' => "add.php"
+  ],
+  [
+    'name' => "cart",
+    'url' => "cart.php"
+  ]
+];
 ?>
 
 <head>
@@ -14,6 +24,17 @@ if (isset($_POST['logOut'])) {
   <link rel="icon" href="../assets/Logo.png" type="image/x-icon">
   <title><?php APPNAME ?></title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            clifford: '#da373d',
+          }
+        }
+      }
+    }
+  </script>
 </head>
 
 <body class="bg-orange-50">
@@ -28,12 +49,19 @@ if (isset($_POST['logOut'])) {
       <li>
         Hello <?php echo  $_SESSION['userName'] ?? "guest" ?>
       </li>
-      <li>
-        <a href="#" class="text-white">menu</a>
-      </li>
-      <li>
-        <a href="add.php" class="text-white">add to BurgerRiza</a>
-      </li>
+
+      <?php if (empty($_SESSION['Role'])) { ?>
+
+      <?php } elseif ($_SESSION['Role'] === "R") { ?>
+        <li>
+          <a href=<?php echo $navList[0]['url'] ?> class="text-white"><?php echo $navList[0]['name'] ?></a>
+        </li>
+      <?php } else { ?>
+        <li>
+          <a href=<?php echo $navList[1]['url'] ?> class="text-white"><?php echo $navList[1]['name'] ?></a>
+        </li>
+      <?php } ?>
+
       <?php if (empty($_SESSION['userName'])) { ?>
         <li>
           <a href="sign-in.php" class="bg-white py-4 px-8 rounded-lg text-red-500 text-xl">sign</a>

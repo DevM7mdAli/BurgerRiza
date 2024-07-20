@@ -5,13 +5,19 @@ if (isset($_POST['submit'])) {
 
   $email = mysqli_escape_string($con, $_POST['email']);
   $password = mysqli_escape_string($con, $_POST['password']);
+  $accountType = mysqli_real_escape_string($con, $_POST['type']);
   $enPwd = md5($password);
   $error;
 
-  $sql = "SELECT * FROM user WHERE email = ? AND user_password = ?";
+  $sql = "SELECT * FROM user WHERE email = ? AND user_password = ? AND account_type = ?";
 
   if ($prStmt = mysqli_prepare($con, $sql)) {
-    mysqli_stmt_bind_param($prStmt, 'ss', $email, $enPwd);
+    if (strtoupper($accountType) === "R") {
+      $type = "R";
+    } else {
+      $type = "C";
+    }
+    mysqli_stmt_bind_param($prStmt, 'sss', $email, $enPwd, $type);
     if (mysqli_stmt_execute($prStmt)) {
       $result = mysqli_stmt_get_result($prStmt);
       $user = mysqli_fetch_assoc($result);
@@ -28,6 +34,7 @@ if (isset($_POST['submit'])) {
     $_SESSION['userName'] = $user['user_name'];
     $_SESSION['cUserEmail'] = $user['email'];
     $_SESSION['cUserId'] = $user['user_id'];
+    $_SESSION['Role'] = $user['account_type'];
     header('Location:index.php');
   } else {
     $error = "failed to log in with these infos:<br /> email : $email <br />  password : $password";
@@ -56,10 +63,17 @@ if (isset($_POST['submit'])) {
 
     <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST" class="pb-12 flex flex-col justify-center items-center w-full gap-y-4">
       <div>
+          <input type="radio" id="Restaurant" name="type" value="R" required>
+          <label for="Restaurant">restaurant</label>
+          <input type="radio" id="Customers" name="type" value="C">
+          <label for="Customers">customer</label>
+        <br>
+
         <label for="Email">Email</label>
-        <input type="text" class="border-2 p-1 text-xl w-full" name="email" id="Email">
+        <input type="text" class="border-2 p-1 text-xl w-full" name="email" id="Email" required>
+
         <label for="PassWord">Password</label>
-        <input type="password" class="border-2 p-1 text-xl w-full" name="password" id="PassWord">
+        <input type="password" class="border-2 p-1 text-xl w-full" name="password" id="PassWord" required>
       </div>
 
       <input type="submit" value="Log In" name="submit" class="p-4 text-xl font-semibold mt-2 bg-red-500 rounded-xl text-white">
