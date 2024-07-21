@@ -64,6 +64,7 @@ if (isset($_GET['id'])) {
         <h1>ID: <?php echo htmlspecialchars($burger['id']) ?></h1>
         <h2>name of the burger: <?php echo htmlspecialchars($burger['burgerName']) ?></h2>
         <h2>price of the burger: <?php echo htmlspecialchars($burger['burger_price']) ?>$</h2>
+        <h2>quantity of the burger: <?php echo htmlspecialchars($burger['quantity']) ?></h2>
         <h2>Extras: <?php echo htmlspecialchars($burger['Extras']) ?></h2>
         <h3>email of person who created it: <?php echo htmlspecialchars($burger['email']) ?></h3>
         <p>created_at: <?php echo htmlspecialchars(date($burger['created_at'])) ?></p>

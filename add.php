@@ -2,8 +2,8 @@
 session_start();
 require 'config/connection.php';
 
-$errors = array('BurgerName' => '', 'price' => '', 'Extras' => '');
-$burName = $price = $Extras =  '';
+$errors = array('BurgerName' => '', 'price' => '', 'Extras' => '', 'quantity' => '');
+$burName = $price = $Extras = $quantity =  '';
 if (isset($_POST['submit']) && !empty($_SESSION['userName'])) {
 
   if (empty($_POST['BurgerName'])) {
@@ -37,16 +37,30 @@ if (isset($_POST['submit']) && !empty($_SESSION['userName'])) {
     }
   }
 
+
+  if (empty($_POST['quantity'])) {
+    $errors['quantity'] = "quantity required" . "<br />";
+  } else {
+    $quantity = htmlspecialchars($_POST['quantity']);
+    if (!preg_match('/^[1-9]\d*$/', $quantity)) {
+      $errors['quantity'] = 'quantity must be a number' . "<br />";
+    } else {
+      if ($quantity <= 0) {
+        $errors['quantity'] = 'quantity must be a positive' . "<br />";
+      }
+    }
+  }
+
   if (!array_filter($errors)) {
     $burName = mysqli_real_escape_string($con, $_POST['BurgerName']);
     $price = mysqli_real_escape_string($con, $_POST['price']);
     $Extras = mysqli_real_escape_string($con, $_POST['Extras']);
 
     //sql to insert
-    $sql = "INSERT INTO burgers (email , burgerName , burger_price , Extras , user_added_id) VALUES (? , ? , ? , ? , ?)";
+    $sql = "INSERT INTO burgers (email , burgerName , burger_price , quantity , Extras , user_added_id) VALUES (? , ? , ? , ? , ? , ?)";
 
     if ($prStmt = mysqli_prepare($con, $sql)) {
-      mysqli_stmt_bind_param($prStmt, "ssdsi", $_SESSION['cUserEmail'], $burName, $price, $Extras, $_SESSION['cUserId']);
+      mysqli_stmt_bind_param($prStmt, "ssdisi", $_SESSION['cUserEmail'], $burName, $price, $quantity, $Extras, $_SESSION['cUserId']);
       if (mysqli_stmt_execute($prStmt)) {
         header('Location:index.php');
       } else {
@@ -68,6 +82,19 @@ if (isset($_POST['submit']) && !empty($_SESSION['userName'])) {
 <?php require('./template/header.php') ?>
 
 <?php if (!empty($_SESSION['cUserEmail']) && !empty($_SESSION['userName'])) { ?>
+  <style>
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Firefox */
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+  </style>
   <section class="text-3xl text-center p-12 flex flex-col justify-center items-center gap-4">
     Add form
     <div class=" bg-white rounded-lg p-8 ">
@@ -100,10 +127,15 @@ if (isset($_POST['submit']) && !empty($_SESSION['userName'])) {
 
       },
       {
-        "type": "text",
+        "type": "number",
         "name": "price",
         "value": "<?php echo htmlspecialchars($price) ?>"
 
+      },
+      {
+        "type": "number",
+        "name": "quantity",
+        "value": "<?php echo htmlspecialchars($quantity) ?>"
       },
       {
         "type": "text",
@@ -125,6 +157,9 @@ if (isset($_POST['submit']) && !empty($_SESSION['userName'])) {
       inField.name = input.code ? input.code : input.name
       inField.id = inField.name
       inField.type = input.type
+      if (inField.name == "price") {
+        inField.step = "0.01"
+      }
       inField.required = true
       form.prepend(inField)
       form.prepend(label)
