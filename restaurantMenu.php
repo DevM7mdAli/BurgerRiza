@@ -34,11 +34,12 @@ if (isset($_GET['restaurant_id']) && $_SESSION['Role'] === "C") {
 
 <?php require('./template/header.php') ?>
 
-<div class="flex flex-col gap-y-12 px-64 pt-8">
+<div class="flex flex-col gap-y-16 px-64 pt-8">
   <?php if (!empty($output)) { ?>
     <h1 class="text-center text-xl font-bold">Welcome to <?php echo $output[0]['name'] ?> Menu</h1>
     <?php foreach ($output as $burger) : ?>
       <div class="flex flex-col justify-around gap-2  px-2 py-8 bg-white rounded-xl">
+        <img src="https://cdn.iconscout.com/icon/free/png-256/free-burger-2664522-2208951.png" alt="burger" class="w-24 h-24 block relative -top-10 -my-12 mx-auto bg-white shadow-md rounded-full">
         <h1 id="burgerName"> Burger Name: <?php echo htmlspecialchars($burger['burgerName']) ?> </h1>
         <div id="Extras" class="flex flex-wrap"> Extras: <?php foreach (explode(',', $burger['Extras']) as $Extra) { ?>
             <div class="px-2"> <?php echo htmlspecialchars($Extra) . " , " ?> </div>
