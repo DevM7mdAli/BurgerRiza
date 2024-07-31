@@ -21,7 +21,7 @@ require './config/connection.php';
 
 
 
-      <div class="flex flex-row justify-between items-center w-full bg-blue-100 p-4">
+      <div class="flex flex-row justify-between items-center w-full bg-white p-4 rounded-lg">
         <div class="w-12 h-12">
           <img src="./assets/Logo.png" alt="burgerPic">
         </div>

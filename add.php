@@ -81,7 +81,7 @@ if (isset($_POST['submit']) && !empty($_SESSION['userName'])) {
 
 <?php require('./template/header.php') ?>
 
-<?php if (!empty($_SESSION['cUserEmail']) && !empty($_SESSION['userName'])) { ?>
+<?php if (!empty($_SESSION['cUserEmail']) && !empty($_SESSION['userName']) && $_SESSION['Role'] === "R") { ?>
   <style>
     /* Chrome, Safari, Edge, Opera */
     input::-webkit-outer-spin-button,
