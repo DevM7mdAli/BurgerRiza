@@ -115,7 +115,7 @@ if (isset($_POST['edit'])) {
           </div>
           <div>
             <h3 onmouseover="document.getElementById('notAllowEmail').classList.toggle('hidden')" onmouseout="document.getElementById('notAllowEmail').classList.toggle('hidden')">email of person who created it: <?php echo htmlspecialchars($burger['email']) ?> </h3>
-            <p class="text-sm text-red-500 hidden" id="notAllowEmail">the created_at is not allowed to be changed</p>
+            <p class="text-sm text-red-500 hidden" id="notAllowEmail">the email is not allowed to be changed</p>
           </div>
           <div>
             <p onmouseover="document.getElementById('notAllow').classList.toggle('hidden')" onmouseout="document.getElementById('notAllow').classList.toggle('hidden')">created_at: <?php echo htmlspecialchars(date($burger['created_at'])) ?></p>
