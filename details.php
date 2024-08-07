@@ -5,7 +5,6 @@ require 'config/connection.php';
 
 // "/^[a-zA-Z -]+$/"
 
-
 // edit the detail
 if (isset($_POST['edit']) && isset($_GET['id'])) {
   $burgerId = mysqli_real_escape_string($con, $_GET['id']);
@@ -116,7 +115,7 @@ if (isset($_GET['id'])) {
             <?php $i = 1;
             foreach (explode(',', $burger['Extras']) as $burg) { ?>
               <div class="flex gap-3" id="extras-<?php echo $i ?>">
-                <h2>Extras: <input onloadstart="collectExtras()" onkeyup="collectExtras()" type="text" id="extrasIn" value="<?php echo htmlspecialchars($burg) ?>"></h2>
+                <h2>Extras: <input onkeyup="collectExtras()" type="text" id="extrasIn" value="<?php echo htmlspecialchars($burg) ?>"></h2>
                 <!-- <div class="h-auto">
                   <span onclick="console.log('test')" class="px-4 text-lg font-semibold bg-red-500 rounded-xl text-white">+</span>
                   <span onclick="console.log('test')" class="px-4 text-lg font-semibold bg-blue-500 rounded-xl text-white">-</span>
@@ -165,7 +164,7 @@ if (isset($_GET['id'])) {
             if (extras.value === "") {
               return
             }
-            submitExtras.value += extras.value + ' , '
+            submitExtras.value += extras.value + ' ,'
           })
         }
 
