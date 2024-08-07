@@ -3,6 +3,29 @@ session_start();
 // connect
 require 'config/connection.php';
 
+// "/^[a-zA-Z -]+$/"
+
+
+// edit the detail
+if (isset($_POST['edit']) && isset($_GET['id'])) {
+  $burgerId = mysqli_real_escape_string($con, $_GET['id']);
+  $burgerName = mysqli_real_escape_string($con, $_POST['burgerName']);
+  $burgerPrice = mysqli_real_escape_string($con, $_POST['burgerPrice']);
+  $extras = mysqli_real_escape_string($con, $_POST['extras']);
+  $quantity = mysqli_real_escape_string($con, $_POST['burgerQuantity']);
+
+  $sql = 'UPDATE burgers SET burgerName = ? , burger_price = ? , Extras = ? , quantity = ? WHERE id = ?';
+
+  if ($prStmt = mysqli_prepare($con, $sql)) {
+    mysqli_stmt_bind_param($prStmt, 'sdsii', $burgerName, $burgerPrice, $extras, $quantity, $burgerId);
+    if (mysqli_stmt_execute($prStmt)) {
+    } else {
+      echo 'error';
+    }
+  }
+}
+
+// deleting the burger
 if (isset($_POST['delete'])) {
   $id_to_delete = mysqli_real_escape_string($con, $_POST['id_to_delete']);
 
@@ -20,7 +43,7 @@ if (isset($_POST['delete'])) {
   }
 }
 
-
+// getting the info
 if (isset($_GET['id'])) {
   $id = mysqli_real_escape_string($con, $_GET['id']);
 
@@ -39,16 +62,6 @@ if (isset($_GET['id'])) {
   } else {
     echo 'error in connection' . mysqli_error($con);
   }
-}
-
-
-// "/^[a-zA-Z -]+$/"
-
-if (isset($_POST['edit'])) {
-  $sql = 'UPDATE burgers SET burgerName = ? , burger_price = ? , Extras = ? , quantity = ? WHERE id = ?';
-
-  $burger_id = $burger['id'];
-  $extras = mysqli_real_escape_string($con, $_POST['extras']);
 }
 
 
@@ -91,19 +104,19 @@ if (isset($_POST['edit'])) {
         </div>
 
         <!-- Input fields -->
-        <form class="flex flex-col items-start justify-center gap-8 text-lg py-4 hidden" id="editDetails" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+        <form class="flex flex-col items-start justify-center gap-8 text-lg py-4 hidden" id="editDetails" action="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $burger['id'] ?>" method="POST">
           <div>
             <h1 onmouseover="document.getElementById('notAllowed').classList.toggle('hidden')" onmouseout="document.getElementById('notAllowed').classList.toggle('hidden')">ID: <?php echo htmlspecialchars($burger['id']) ?></h1>
             <p class="text-sm text-red-500 hidden" id="notAllowed">the id is not allowed to be changed</p>
           </div>
-          <h2>name of the burger: <input type="text" value="<?php echo htmlspecialchars($burger['burgerName']) ?>"></h2>
-          <h2>price of the burger: <input type="text" value="<?php echo htmlspecialchars($burger['burger_price']) ?>"></h2>
-          <h2>quantity of the burger: <input type="text" size="7" value="<?php echo htmlspecialchars($burger['quantity']) ?>"></h2>
+          <h2>name of the burger: <input type="text" name="burgerName" value="<?php echo htmlspecialchars($burger['burgerName']) ?>"></h2>
+          <h2>price of the burger: <input type="text" name="burgerPrice" value="<?php echo htmlspecialchars($burger['burger_price']) ?>"></h2>
+          <h2>quantity of the burger: <input type="text" name="burgerQuantity" size="7" value="<?php echo htmlspecialchars($burger['quantity']) ?>"></h2>
           <div class="flex flex-col gap-4 items-center">
             <?php $i = 1;
             foreach (explode(',', $burger['Extras']) as $burg) { ?>
               <div class="flex gap-3" id="extras-<?php echo $i ?>">
-                <h2>Extras: <input onkeyup="collectExtras()" type="text" id="extrasIn" value="<?php echo htmlspecialchars($burg) ?>"></h2>
+                <h2>Extras: <input onloadstart="collectExtras()" onkeyup="collectExtras()" type="text" id="extrasIn" value="<?php echo htmlspecialchars($burg) ?>"></h2>
                 <!-- <div class="h-auto">
                   <span onclick="console.log('test')" class="px-4 text-lg font-semibold bg-red-500 rounded-xl text-white">+</span>
                   <span onclick="console.log('test')" class="px-4 text-lg font-semibold bg-blue-500 rounded-xl text-white">-</span>
@@ -149,6 +162,9 @@ if (isset($_POST['edit'])) {
           const submitExtras = document.getElementById('totalExtras')
           submitExtras.value = ""
           allExtras.forEach((extras) => {
+            if (extras.value === "") {
+              return
+            }
             submitExtras.value += extras.value + ' , '
           })
         }
@@ -160,6 +176,8 @@ if (isset($_POST['edit'])) {
           editButton.classList.toggle('hidden')
           cancelButton.classList.toggle('hidden')
         }
+
+        collectExtras()
       </script>
 
     <?php } else { ?>
