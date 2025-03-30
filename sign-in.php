@@ -9,8 +9,6 @@ if (isset($_POST['submit'])) {
   $enPwd = md5($password);
   $error = "";
 
-  echo $email . $password . $accountType;
-
   $sql = "SELECT * FROM user WHERE email = ? AND user_password = ? AND account_type = ?";
 
   if ($prStmt = mysqli_prepare($con, $sql)) {
@@ -59,32 +57,51 @@ if (isset($_POST['submit'])) {
       <h2 class="text-2xl font-bold text-red-500 mb-2">Welcome Back!</h2>
       <p class="text-gray-600 mb-6">Please log in to your account</p>
 
-      <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST" class="space-y-4">
+      <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
         <div class="text-left">
-            <input type="radio" id="Restaurant" name="type" value="R" required>
-            <label for="Restaurant">restaurant</label>
-            <input type="radio" id="Customers" name="type" value="C">
-            <label for="Customers">customer</label>
-
-
-          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-          <input type="email" id="email" name="email" placeholder="Enter your email" required
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
-        </div>
-
-        <div class="text-left">
-          <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-          <div class="relative">
-            <input type="password" id="password" name="password" placeholder="•••••••" required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
-            <button class="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-500 toggle-password" onclick="togglePassword()">👁️</button>
+          <!-- User Inputs -->
+          <div class="flex justify-between">
+            <label for="Restaurant">
+              <input type="radio" id="Restaurant" name="type" value="R" required checked>
+              restaurant
+            </label>
+            <label for="Customers">
+              <input type="radio" id="Customers" name="type" value="C">
+              customer</label>
           </div>
+
+          <section class="flex flex-col gap-y-4 py-4">
+            <label for="email" class="block text-sm font-medium text-gray-700">Email
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+            </label>
+
+            <div class="text-left">
+              <label for="password" class="block text-sm font-medium text-gray-700">Password
+                <div class="relative">
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="•••••••"
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                  <button class="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-500 toggle-password" onclick="togglePassword()">👁️</button>
+                </div>
+              </label>
+            </div>
+          </section>
         </div>
 
         <input type="submit" name="submit" value="Log in"
           class="w-full bg-red-500 text-white py-2 rounded-lg font-bold hover:bg-orange-400 transition-transform transform hover:scale-105" />
       </form>
-      <?php echo htmlspecialchars($error ?? "", ENT_QUOTES, 'UTF-8') ?>
+      <?php echo $error ?? "" ?>
       <p class="text-sm text-gray-600 mt-4">Don't have an account? <a href="sign-up.php" class="text-red-500 hover:underline">Sign Up</a></p>
     </div>
   </div>
