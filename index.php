@@ -15,13 +15,9 @@ $result = mysqli_query($con, $query);
 // taking the result as assos array
 $output = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-
 mysqli_free_result($result);
 
 mysqli_close($con);
-
-
-
 ?>
 
 

@@ -62,11 +62,21 @@ if (isset($_POST['submit'])) {
           <!-- User Inputs -->
           <div class="flex justify-between">
             <label for="Restaurant">
-              <input type="radio" id="Restaurant" name="type" value="R" required checked>
+              <input
+                type="radio"
+                id="Restaurant"
+                name="type"
+                value="R"
+                required
+                checked>
               restaurant
             </label>
             <label for="Customers">
-              <input type="radio" id="Customers" name="type" value="C">
+              <input
+                type="radio"
+                id="Customers"
+                name="type"
+                value="C">
               customer</label>
           </div>
 
@@ -98,7 +108,10 @@ if (isset($_POST['submit'])) {
           </section>
         </div>
 
-        <input type="submit" name="submit" value="Log in"
+        <input
+          type="submit"
+          name="submit"
+          value="Log in"
           class="w-full bg-red-500 text-white py-2 rounded-lg font-bold hover:bg-orange-400 transition-transform transform hover:scale-105" />
       </form>
       <?php echo $error ?? "" ?>
@@ -106,8 +119,7 @@ if (isset($_POST['submit'])) {
     </div>
   </div>
   <script>
-    function togglePassword(event) {
-      event.preventDefault();
+    function togglePassword() {
       const password = document.getElementById('password');
       const toggle = document.querySelector('.toggle-password');
 
