@@ -35,6 +35,14 @@ if (isset($_POST['submit'])) {
     $_SESSION['cUserEmail'] = $user['email'];
     $_SESSION['cUserId'] = $user['user_id'];
     $_SESSION['Role'] = $user['account_type'];
+    if (isset($_POST['remember'])) {
+      $remember = $_POST['remember'];
+      setcookie('remember_email', $user['email'], time() + 3600 * 24 * 365);
+      setcookie('remember', $remember, time() + 3600 * 24 * 365);
+    } else {
+      setcookie('remember_email', '', time() - 3600);
+      setcookie('remember', '', time() - 3600);
+    }
     header('Location:index.php');
   } else {
     $error = "failed to log in with these infos:<br /> email : $email <br />  password : $password";
@@ -86,6 +94,7 @@ if (isset($_POST['submit'])) {
                 type="email"
                 id="email"
                 name="email"
+                value="<?php echo $_COOKIE['remember_email'] ?? '' ?>"
                 placeholder="Enter your email"
                 required
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
@@ -113,6 +122,11 @@ if (isset($_POST['submit'])) {
           name="submit"
           value="Log in"
           class="w-full bg-red-500 text-white py-2 rounded-lg font-bold hover:bg-orange-400 transition-transform transform hover:scale-105" />
+
+        <label for="remember">
+          Remember me
+          <input type="checkbox" name="remember" <?php echo isset($_COOKIE['remember']) ? 'checked' : ''; ?> />
+        </label>
       </form>
       <?php echo $error ?? "" ?>
       <p class="text-sm text-gray-600 mt-4">Don't have an account? <a href="sign-up.php" class="text-red-500 hover:underline">Sign Up</a></p>

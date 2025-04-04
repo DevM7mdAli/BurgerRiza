@@ -95,9 +95,9 @@ if (isset($_POST['submit']) && !empty($_SESSION['userName'])) {
       -moz-appearance: textfield;
     }
   </style>
-  <section class="text-3xl text-center p-12 flex flex-col justify-center items-center gap-4">
+  <section class="text-3xl text-center p-12 flex flex-col justify-center items-center gap-4 min-h-screen">
     Add form
-    <div class=" bg-white rounded-lg p-8 ">
+    <div class=" bg-white rounded-lg p-8">
       <form class="flex flex-col justify-center items-start gap-y-4" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST" id="addForm">
 
         <div class="w-full flex justify-center">
