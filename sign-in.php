@@ -110,7 +110,11 @@ if (isset($_POST['submit'])) {
                     placeholder="•••••••"
                     required
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
-                  <button class="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-500 toggle-password" onclick="togglePassword()">👁️</button>
+                  <input
+                    class="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-500 toggle-password"
+                    onclick="togglePassword()"
+                    type="button"
+                    value="👁️" />
                 </div>
               </label>
             </div>
@@ -139,10 +143,10 @@ if (isset($_POST['submit'])) {
 
       if (password.type === "password") {
         password.type = "text";
-        toggle.textContent = "🙈";
+        toggle.value = "🙈";
       } else {
         password.type = "password";
-        toggle.textContent = "👁️";
+        toggle.value = "👁️";
       }
     }
   </script>
