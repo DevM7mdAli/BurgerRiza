@@ -63,6 +63,17 @@ if (isset($_GET['id'])) {
   }
 }
 
+# security check
+if (!$burger) {
+  echo "<h1 class=\"text-5xl text-center p-4\"> Error not found </h1>";
+  exit;
+}
+
+if (empty($_SESSION['cUserId']) || $burger['user_added_id'] != $_SESSION['cUserId']) {
+  echo "<h1 class=\"text-5xl text-center p-4\">You don't have the auth</h1>";
+  exit;
+}
+
 
 ?>
 
@@ -73,121 +84,123 @@ if (isset($_GET['id'])) {
 
 <?php require('./template/header.php') ?>
 
-<div class="flex flex-col justify-center">
-  <?php if ($burger) : ?>
-    <?php if (!empty($_SESSION['cUserId']) && $burger['user_added_id'] == $_SESSION['cUserId']) { ?>
+<div class="flex flex-col justify-center min-h-screen">
 
 
-      <h1 class="text-4xl font-bold text-center p-4">
-        Details
-      </h1>
-      <div class="flex justify-end mx-24">
-        <button onclick="toggle()" class=" w-16 h-16 mt-2 " id="edit"><img src="https://static.thenounproject.com/png/5926334-200.png" alt="edit"></button>
-        <button onclick="toggle()" class=" w-16 h-16 mt-2 hidden" id="cancel"><img src="https://static.thenounproject.com/png/966946-200.png" alt="cancel"></button>
-      </div>
+  <h1 class="text-4xl font-bold text-center p-4">
+    Details
+  </h1>
+  <div class="flex justify-end mx-24">
+    <button onclick="toggle()" class=" w-16 h-16 mt-2 " id="edit"><img src="https://static.thenounproject.com/png/5926334-200.png" alt="edit"></button>
+    <button onclick="toggle()" class=" w-16 h-16 mt-2 hidden" id="cancel"><img src="https://static.thenounproject.com/png/966946-200.png" alt="cancel"></button>
+  </div>
 
 
-      <div id="allInfo" class="flex flex-col items-center justify-center gap-8 text-lg py-4">
+  <div id="allInfo" class="flex flex-col items-center justify-center gap-8 text-lg py-4">
 
-        <!--Displaying -->
-        <div id="showDetails">
-          <div class="flex flex-col items-start justify-center gap-8 text-lg py-4">
-            <h1>ID: <?php echo htmlspecialchars($burger['id']) ?></h1>
-            <h2>name of the burger: <?php echo htmlspecialchars($burger['burgerName']) ?></h2>
-            <h2>price of the burger: <?php echo htmlspecialchars($burger['burger_price']) ?>$</h2>
-            <h2>quantity of the burger: <?php echo htmlspecialchars($burger['quantity']) ?></h2>
-            <h2>Extras: <?php echo htmlspecialchars($burger['Extras']) ?></h2>
-            <h3>email of person who created it: <?php echo htmlspecialchars($burger['email']) ?></h3>
-            <p>created_at: <?php echo htmlspecialchars(date($burger['created_at'])) ?></p>
-          </div>
-        </div>
-
-        <!-- Input fields -->
-        <form class="flex flex-col items-start justify-center gap-8 text-lg py-4 hidden" id="editDetails" action="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $burger['id'] ?>" method="POST">
-          <div>
-            <h1 onmouseover="document.getElementById('notAllowed').classList.toggle('hidden')" onmouseout="document.getElementById('notAllowed').classList.toggle('hidden')">ID: <?php echo htmlspecialchars($burger['id']) ?></h1>
-            <p class="text-sm text-red-500 hidden" id="notAllowed">the id is not allowed to be changed</p>
-          </div>
-          <h2>name of the burger: <input type="text" name="burgerName" value="<?php echo htmlspecialchars($burger['burgerName']) ?>"></h2>
-          <h2>price of the burger: <input type="text" name="burgerPrice" value="<?php echo htmlspecialchars($burger['burger_price']) ?>"></h2>
-          <h2>quantity of the burger: <input type="text" name="burgerQuantity" size="7" value="<?php echo htmlspecialchars($burger['quantity']) ?>"></h2>
-          <div class="flex flex-col gap-4 items-center">
-            <?php $i = 1;
-            foreach (explode(',', $burger['Extras']) as $burg) { ?>
-              <div class="flex gap-3" id="extras-<?php echo $i ?>">
-                <h2>Extras: <input onkeyup="collectExtras()" type="text" id="extrasIn" value="<?php echo htmlspecialchars($burg) ?>"></h2>
-                <!-- <div class="h-auto">
-                  <span onclick="console.log('test')" class="px-4 text-lg font-semibold bg-red-500 rounded-xl text-white">+</span>
-                  <span onclick="console.log('test')" class="px-4 text-lg font-semibold bg-blue-500 rounded-xl text-white">-</span>
-                </div> -->
-              </div>
-            <?php $i++;
-            } ?>
-            <input type="text" class="hidden" name="extras" id="totalExtras">
-          </div>
-          <div>
-            <h3 onmouseover="document.getElementById('notAllowEmail').classList.toggle('hidden')" onmouseout="document.getElementById('notAllowEmail').classList.toggle('hidden')">email of person who created it: <?php echo htmlspecialchars($burger['email']) ?> </h3>
-            <p class="text-sm text-red-500 hidden" id="notAllowEmail">the email is not allowed to be changed</p>
-          </div>
-          <div>
-            <p onmouseover="document.getElementById('notAllow').classList.toggle('hidden')" onmouseout="document.getElementById('notAllow').classList.toggle('hidden')">created_at: <?php echo htmlspecialchars(date($burger['created_at'])) ?></p>
-            <p class="text-sm text-red-500 hidden" id="notAllow">the created_at is not allowed to be changed</p>
-          </div>
-          <input type="submit" value="Confirm" name="edit" class="w-full p-4 text-xl font-semibold mt-2 bg-red-500 rounded-xl text-white">
-        </form>
-
-        <div id="buttons" class="flex justify-center items-center gap-4">
-          <?php if (!empty($_SESSION['userName']) && !empty($_SESSION['cUserEmail'])) { ?>
-            <?php if ($burger['email'] === $_SESSION['cUserEmail']) { ?>
-              <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST" id="del">
-                <input type="hidden" name="id_to_delete" value="<?php echo $burger['id'] ?>">
-                <input type="submit" name="delete" value="Delete" class="p-4 text-xl font-semibold mt-2 bg-red-500 rounded-xl text-white w-full">
-              </form>
-            <?php } ?>
+    <!--Displaying for when first enter no change just to delete -->
+    <div id="showDetails">
+      <div class="flex flex-col items-start justify-center gap-8 text-lg py-4">
+        <h1>ID: <?php echo htmlspecialchars($burger['id']) ?></h1>
+        <h2>name of the burger: <?php echo htmlspecialchars($burger['burgerName']) ?></h2>
+        <h2>price of the burger: <?php echo htmlspecialchars($burger['burger_price']) ?>$</h2>
+        <h2>quantity of the burger: <?php echo htmlspecialchars($burger['quantity']) ?></h2>
+        <h2>Extras: <?php echo htmlspecialchars($burger['Extras']) ?></h2>
+        <h3>email of person who created it: <?php echo htmlspecialchars($burger['email']) ?></h3>
+        <p>created_at: <?php echo htmlspecialchars(date($burger['created_at'])) ?></p>
+        <!-- delete button -->
+        <?php if (!empty($_SESSION['userName']) && !empty($_SESSION['cUserEmail'])) { ?>
+          <?php if ($burger['email'] === $_SESSION['cUserEmail']) { ?>
+            <form
+              action="<?php echo $_SERVER['PHP_SELF'] ?>"
+              method="POST"
+              id="del"
+              class="flex flex-grow w-full">
+              <input type="hidden" name="id_to_delete" value="<?php echo $burger['id'] ?>">
+              <input type="submit" name="delete" value="Delete" class="p-4 text-xl font-semibold mt-2 bg-red-500 rounded-xl text-white flex flex-grow">
+            </form>
           <?php } ?>
-
-        </div>
+        <?php } ?>
       </div>
+    </div>
 
-      <script>
-        const deleteButoon = document.getElementById('del')
-        const detailsBody = document.getElementById('showDetails')
-        const editBody = document.getElementById('editDetails')
-        const editButton = document.getElementById('edit')
-        const cancelButton = document.getElementById('cancel')
+    <!-- Form body to change -->
+    <form
+      class=" flex-col items-start justify-center gap-8 text-lg py-4 hidden"
+      id="editDetails"
+      action="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $burger['id'] ?>"
+      method="POST">
+      <div>
+        <h1
+          onmouseover="document.getElementById('notAllowed').classList.toggle('hidden')"
+          onmouseout="document.getElementById('notAllowed').classList.toggle('hidden')">
+          ID: <?php echo htmlspecialchars($burger['id']) ?>
+        </h1>
+        <p class="text-sm text-red-500 hidden" id="notAllowed">the id is not allowed to be changed</p>
+      </div>
+      <!-- list of inputs  -->
+      <label>name of the burger:
+        <input
+          type="text"
+          name="burgerName"
+          class="p-0.5 border-2 rounded-md bg-primary"
+          value="<?php echo htmlspecialchars($burger['burgerName']) ?>">
+      </label>
+      <label>price of the burger:
+        <input
+          type="text"
+          name="burgerPrice"
+          class="p-0.5 border-2 rounded-md bg-primary"
+          value="<?php echo htmlspecialchars($burger['burger_price']) ?>">
+      </label>
+      <label>quantity of the burger:
+        <input
+          type="text"
+          name="burgerQuantity"
+          class="p-0.5 border-2 rounded-md bg-primary"
+          size="7"
+          value="<?php echo htmlspecialchars($burger['quantity']) ?>">
+      </label>
+      <div class="flex flex-col gap-4 items-center">
+        <?php $index = 1;
+        foreach (explode(',', $burger['Extras']) as $burg) { ?>
+          <div class="flex gap-3" id="extras-<?php echo $index ?>">
+            <h2>Extras: <input onkeyup="collectExtras()" type="text"
+                class="p-0.5 border-2 rounded-md bg-primary" id="extrasIn" value="<?php echo htmlspecialchars($burg) ?>"></h2>
+            <div class="flex flex-wrap items-center gap-1">
+              <span onclick="console.log('test')" class="px-4 text-lg font-semibold bg-red-500 rounded-xl text-white">+</span>
+              <span onclick="console.log('test')" class="px-4 text-lg font-semibold bg-blue-500 rounded-xl text-white">-</span>
+            </div>
+          </div>
+        <?php $index++;
+        } ?>
+        <input type="text" class="hidden" name="extras" id="totalExtras">
+      </div>
+      <div>
+        <h3
+          onmouseover="document.getElementById('notAllowEmail').classList.toggle('hidden')"
+          onmouseout="document.getElementById('notAllowEmail').classList.toggle('hidden')">
+          email of person who created it: <?php echo htmlspecialchars($burger['email']) ?>
+        </h3>
+        <p class="text-sm text-red-500 hidden" id="notAllowEmail">the email is not allowed to be changed</p>
+      </div>
+      <div>
+        <p
+          onmouseover="document.getElementById('notAllow').classList.toggle('hidden')"
+          onmouseout="document.getElementById('notAllow').classList.toggle('hidden')">
+          created_at: <?php echo htmlspecialchars(date($burger['created_at'])) ?>
+        </p>
+        <p class="text-sm text-red-500 hidden" id="notAllow">the created_at is not allowed to be changed</p>
+      </div>
+      <input
+        type="submit"
+        value="Confirm"
+        name="edit"
+        class="w-full p-4 text-xl font-semibold mt-2 bg-red-500 rounded-xl text-white">
+    </form>
+  </div>
 
-        function collectExtras() {
-          const allExtras = document.querySelectorAll('#extrasIn')
-          const submitExtras = document.getElementById('totalExtras')
-          submitExtras.value = ""
-          allExtras.forEach((extras) => {
-            if (extras.value === "") {
-              return
-            }
-            submitExtras.value += extras.value + ' ,'
-          })
-        }
-
-        function toggle() {
-          deleteButoon.classList.toggle('hidden')
-          detailsBody.classList.toggle('hidden')
-          editBody.classList.toggle('hidden')
-          editButton.classList.toggle('hidden')
-          cancelButton.classList.toggle('hidden')
-        }
-
-        collectExtras()
-      </script>
-
-    <?php } else { ?>
-      <h1 class="text-5xl text-center p-4"> you don't have the auth</h1>
-    <?php } ?>
-  <?php else : ?>
-    <h1 class="text-5xl text-center p-4"> Error not found </h1>
-
-  <?php endif ?>
-
-
+  <script src="JS/detailsScript.js"></script>
 </div>
 
 
