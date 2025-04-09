@@ -143,18 +143,21 @@ if (empty($_SESSION['cUserId']) || $burger['user_added_id'] != $_SESSION['cUserI
         <input
           type="text"
           name="burgerName"
+          class="p-0.5 border-2 rounded-md bg-primary"
           value="<?php echo htmlspecialchars($burger['burgerName']) ?>">
       </label>
       <label>price of the burger:
         <input
           type="text"
           name="burgerPrice"
+          class="p-0.5 border-2 rounded-md bg-primary"
           value="<?php echo htmlspecialchars($burger['burger_price']) ?>">
       </label>
       <label>quantity of the burger:
         <input
           type="text"
           name="burgerQuantity"
+          class="p-0.5 border-2 rounded-md bg-primary"
           size="7"
           value="<?php echo htmlspecialchars($burger['quantity']) ?>">
       </label>
@@ -162,8 +165,9 @@ if (empty($_SESSION['cUserId']) || $burger['user_added_id'] != $_SESSION['cUserI
         <?php $index = 1;
         foreach (explode(',', $burger['Extras']) as $burg) { ?>
           <div class="flex gap-3" id="extras-<?php echo $index ?>">
-            <h2>Extras: <input onkeyup="collectExtras()" type="text" id="extrasIn" value="<?php echo htmlspecialchars($burg) ?>"></h2>
-            <div class="h-auto">
+            <h2>Extras: <input onkeyup="collectExtras()" type="text"
+                class="p-0.5 border-2 rounded-md bg-primary" id="extrasIn" value="<?php echo htmlspecialchars($burg) ?>"></h2>
+            <div class="flex flex-wrap items-center gap-1">
               <span onclick="console.log('test')" class="px-4 text-lg font-semibold bg-red-500 rounded-xl text-white">+</span>
               <span onclick="console.log('test')" class="px-4 text-lg font-semibold bg-blue-500 rounded-xl text-white">-</span>
             </div>
@@ -188,7 +192,11 @@ if (empty($_SESSION['cUserId']) || $burger['user_added_id'] != $_SESSION['cUserI
         </p>
         <p class="text-sm text-red-500 hidden" id="notAllow">the created_at is not allowed to be changed</p>
       </div>
-      <input type="submit" value="Confirm" name="edit" class="w-full p-4 text-xl font-semibold mt-2 bg-red-500 rounded-xl text-white">
+      <input
+        type="submit"
+        value="Confirm"
+        name="edit"
+        class="w-full p-4 text-xl font-semibold mt-2 bg-red-500 rounded-xl text-white">
     </form>
   </div>
 
