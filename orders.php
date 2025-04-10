@@ -17,7 +17,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ([1, 2, 3, 4, 56, 6, 3, 4, 5, 6, 7] as $hello) { ?>
+                        <?php foreach ([1, 2, 3, 4, 5, 6, 3, 4, 5, 6, 7] as $hello) { ?>
                             <tr class="hover:bg-orange-300">
                                 <td class="p-6">123123</td>
                                 <td class="p-6">3</td>
