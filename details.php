@@ -96,11 +96,11 @@ if (empty($_SESSION['cUserId']) || $burger['user_added_id'] != $_SESSION['cUserI
   </div>
 
 
-  <div id="allInfo" class="flex flex-col items-center justify-center gap-8 text-lg py-4">
+  <div id="allInfo" class="flex flex-col justify-center gap-8 text-lg mx-24 p-3">
 
     <!--Displaying for when first enter no change just to delete -->
-    <div id="showDetails">
-      <div class="flex flex-col items-start justify-center gap-8 text-lg py-4">
+    <div id="showDetails" class="p-8 bg-primary rounded-lg">
+      <div class="flex flex-col items-start gap-8 text-lg">
         <h1>ID: <?php echo htmlspecialchars($burger['id']) ?></h1>
         <h2>name of the burger: <?php echo htmlspecialchars($burger['burgerName']) ?></h2>
         <h2>price of the burger: <?php echo htmlspecialchars($burger['burger_price']) ?>$</h2>
@@ -126,7 +126,7 @@ if (empty($_SESSION['cUserId']) || $burger['user_added_id'] != $_SESSION['cUserI
 
     <!-- Form body to change -->
     <form
-      class=" flex-col items-start justify-center gap-8 text-lg py-4 hidden"
+      class=" flex-col items-start justify-center gap-8 text-lg hidden p-8 bg-primary rounded-lg"
       id="editDetails"
       action="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $burger['id'] ?>"
       method="POST">
