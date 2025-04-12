@@ -39,7 +39,7 @@ $navList = [
 
     <ul class="flex items-center gap-14 font-bold text-lg text-white">
       <li>
-        Hello <?php echo $_SESSION['userName'] ?? "guest" ?>
+        Hello <?php echo htmlspecialchars($_SESSION['userName']) ?? "guest" ?>
       </li>
 
       <?php if (empty($_SESSION['Role'])) { ?>
