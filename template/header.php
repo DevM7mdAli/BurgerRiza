@@ -7,14 +7,16 @@ if (isset($_POST['logOut'])) {
   header('Location:index.php');
 }
 $navList;
-if ($_SESSION['Role'] === "R") {
-  $navList = [
-    'Add to your menu' => "add.php",
-  ];
-} else {
-  $navList = [
-    'cart' => "cart.php",
-  ];
+if (!empty($_SESSION['Role'])) {
+  if ($_SESSION['Role'] === "R") {
+    $navList = [
+      'Add to your menu' => "add.php",
+    ];
+  } else {
+    $navList = [
+      'cart' => "cart.php",
+    ];
+  }
 }
 ?>
 
