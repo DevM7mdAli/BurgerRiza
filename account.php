@@ -47,7 +47,7 @@ require 'config/connection.php';
         </div>
     </div>
 
-    <?php require('../BurgerRiza/orders.php') ?>
+    <?php require('./template/account/orders.php') ?>
 
 </div>
 
