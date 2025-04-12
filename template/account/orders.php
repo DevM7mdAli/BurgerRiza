@@ -15,7 +15,7 @@
                     <div class="w-1/4 text-center">3</div>
                     <div class="w-1/4 text-center">500SAR</div>
                     <div class="w-1/4 text-center">2025/05/01</div>
-                </div>
+                </div> 
             <?php endforeach; ?>
         </div>
     </div>
