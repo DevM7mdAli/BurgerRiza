@@ -6,7 +6,7 @@
         <div class="bg-white p-4 rounded-2xl shadow-lg">
             <div class="bg-white p-8 rounded-2xl">
 
-                <div class="flex justify-between items-center bg-gray-400 px-4 py-2 font-semibold text-gray-700 border-b rounded-t-2xl">
+                <div class="flex justify-between items-center bg-gray-200 px-4 py-2 font-semibold text-gray-700 border-b rounded-t-2xl">
                     <div class="w-1/4 text-center">Order ID</div>
                     <div class="w-1/4 text-center">Number of Items</div>
                     <div class="w-1/4 text-center">Price</div>

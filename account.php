@@ -4,7 +4,7 @@
 
 
 <div class="flex flex-col min-h-screen p-8 gap-6 px-36">
-    <div class=" overflow-hidden ">
+    <div class="  overflow-hidden">
 
         <div class=" bg-accent p-6 rounded-t-3xl">
 
@@ -18,9 +18,8 @@
 
             <div class="mt-4 text-center">
                 <h2 class="text-2xl font-bold text-white">Ali Yousif</h2>
-                <p class="text-indigo-200">@iexample</p>
             </div>
-        </div>
+    </div>
     
 
     <div class="flex flex-col gap-6 p-4 bg-white rounded-b-3xl">
