@@ -45,7 +45,7 @@ if (isset($_POST['submit'])) {
     }
     header('Location:index.php');
   } else {
-    $error = "failed to log in with these infos:<br /> email : $email <br />  password : $password";
+    $error = sprintf("failed to log in with these infos:<br /> email : %s <br />  password : %s", htmlspecialchars($email), htmlspecialchars($password));
   }
 }
 ?>
