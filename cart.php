@@ -7,70 +7,41 @@ require './config/connection.php';
 ?>
 
 
-
 <!DOCTYPE html>
 <html lang="en">
-
+<?php if ($_SESSION['Role'] === "C") { ?>
 <?php require('./template/header.php') ?>
 
-<?php if ($_SESSION['Role'] === "C") { ?>
 <div class=" min-h-screen ">
-<section>
-    <h1 class="text-center text-3xl font-bold py-4">Cart</h1>
+<section class="bg-white shadow-md rounded-lg overflow-hidden p-6">
+      <div class="flex flex-col gap-4">
+      <?php foreach ([1, 2, 3, 4, 5, 6] as $Items) { ?>
+          <div class="flex items-center justify-between p-3 border-b border-gray-200">
+            <div class="flex items-center gap-4">
+              <img src="./assets/Logo.png"  class="w-16 h-16 object-cover rounded">
+              <div>
+                <h2 class="text-xl font-semibold text-gray-700">Bigcheese Burger</h2>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="px-3 py-1 bg-gray-200 rounded">Qty: 1</span>
+                <input type="submit" name="delete" value="Delete" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-500 transition duration-200">
+            </div>
+          </div>
+      <?php }?>
 
-    <div class=" mx-12 flex flex-col items-center px-16 gap-y-5 bg-gradient-to-br from-red-500 via-orange-400 to-yellow-300 p-4 rounded-2xl" id="listOfTheCart">
-
-
-
-      <div class="flex flex-row justify-between items-center w-full bg-white p-4 rounded-lg">
-        <div class="w-12 h-12">
-          <img src="./assets/Logo.png" alt="burgerPic">
-        </div>
-
-        <div class="flex-grow px-12 text-lg">
-          Bigcheese
-        </div>
-
-        <div class="flex items-center">
-          <p class="mr-4 bg-neutral-200 p-0.5 rounded-xl">Quantity: 1</p>
-          <!-- <input type="number" min="1" value="quantity"> -->
-          <input type="submit" value="Delete" class="p-2 rounded-lg bg-red-500 text-white hover:bg-orange-400" name="Delete">
-        </div>
-        
+      <div class="mt-6 flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-gray-800">Total: $23</h1>
+          <input type="submit" name="checkout" value="Checkout" class="px-6 py-3 bg-green-500 text-white rounded hover:bg-green-600 transition duration-200">
       </div>
-      <div class="flex flex-row justify-between items-center w-full bg-white p-4 rounded-lg">
-        <div class="w-12 h-12">
-          <img src="./assets/Logo.png" alt="burgerPic">
-        </div>
-
-        <div class="flex-grow px-12 text-lg">
-          Bigcheese
-        </div>
-
-        <div class="flex items-center">
-          <p class="mr-4 bg-neutral-200 p-0.5 rounded-xl">Quantity: 1</p>
-          <!-- <input type="number" min="1" value="quantity"> -->
-          <input type="submit" value="Delete" class="p-2 rounded-lg bg-red-500 text-white hover:bg-orange-400" name="Delete">
-        </div>
-        
-      </div>
-
-      <div id="totalCheckout">
-        <div class="flex flex-row justify-between items-center w-full bg-white p-4 rounded-lg gap-3">
-          <h1 class="font-semibold text-xl">Total: 23$</h1>
-          <input type="submit" value="checkout" class="bg-red-500 p-2 rounded-lg text-white hover:bg-orange-400">
-        </div>
-      </div>
-
-    </div>
-  </section>
+    </section>
 </div>
-<?php } else {
-  header('Location:index.php');
-} ?>
+
 
 
 
 <?php require('./template/footer.php') ?>
-
+<?php } else {
+  header('Location:index.php');
+} ?>
 </html>
