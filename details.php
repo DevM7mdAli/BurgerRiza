@@ -126,7 +126,7 @@ if (empty($_SESSION['cUserId']) || $burger['user_added_id'] != $_SESSION['cUserI
 
     <!-- Form body to change -->
     <form
-      class=" flex-col items-start justify-center gap-8 text-lg hidden p-8 bg-primary rounded-lg"
+      class="flex-col items-start justify-center gap-8 text-lg hidden p-8 bg-primary rounded-lg"
       id="editDetails"
       action="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $burger['id'] ?>"
       method="POST">
