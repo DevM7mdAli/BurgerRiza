@@ -1,5 +1,5 @@
 <footer class="bg-black w-full">
-  <div class="text-2xl text-white text-center p-12">copyright 2024 <?php APPNAME ?></div>
+  <div class="flex flex-row text-2xl font-mono text-white p-5 justify-center">2024 Copyright <?php APPNAME ?></div>
 </footer>
 <!-- end of the footer -->
 </body>
