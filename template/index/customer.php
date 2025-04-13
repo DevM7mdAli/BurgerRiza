@@ -1,5 +1,5 @@
-<div id="bodyOfListRestaurant" class="flex flex-col items-center px-24 gap-y-14">
-  <h1 class="text-center text-xl font-bold pt-3 pb-4">List of restaurant</h1>
+<h1 class="text-center text-xl font-bold pt-3 pb-4 mb-12">List of restaurant</h1>
+<div id="bodyOfListRestaurant" class="grid grid-cols-1 sm:grid-cols-2 items-center px-12 gap-x-5 gap-y-14">
 
   <?php foreach ($output as $rest) { ?>
     <div class="px-2 py-8 bg-white rounded-xl w-full h-36 flex flex-col justify-around ">
