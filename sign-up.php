@@ -5,9 +5,9 @@ require './config/connection.php';
 
 if (isset($_POST['submit'])) {
   $email = mysqli_real_escape_string($con, $_POST['email']);
-  $username = mysqli_real_escape_string($con, $_POST['userName']);
-  $fName = mysqli_real_escape_string($con, $_POST['FName']);
-  $lName = mysqli_real_escape_string($con, $_POST['LName']);
+  $username = mysqli_real_escape_string($con, htmlspecialchars($_POST['userName']));
+  $fName = mysqli_real_escape_string($con, htmlspecialchars($_POST['FName']));
+  $lName = mysqli_real_escape_string($con, htmlspecialchars($_POST['LName']));
   $pwd = mysqli_real_escape_string($con, $_POST['pwd']);
   $accountType = mysqli_real_escape_string($con, $_POST['type']);
   $cPwd = mysqli_real_escape_string($con, $_POST['confirmPassword']);
