@@ -1,6 +1,7 @@
 <?php
 session_start();
-// connect
+require 'utils/auth-functions/guest-kick-to-log.php';
+
 require 'config/connection.php';
 
 // "/^[a-zA-Z -]+$/"
@@ -64,15 +65,7 @@ if (isset($_GET['id'])) {
 }
 
 # security check
-if (!$burger) {
-  echo "<h1 class=\"text-5xl text-center p-4\"> Error not found </h1>";
-  exit;
-}
-
-if (empty($_SESSION['cUserId']) || $burger['user_added_id'] != $_SESSION['cUserId']) {
-  echo "<h1 class=\"text-5xl text-center p-4\">You don't have the auth</h1>";
-  exit;
-}
+require 'utils/not-found/details-not-found.php'
 
 
 ?>

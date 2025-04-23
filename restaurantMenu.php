@@ -1,10 +1,12 @@
 <?php
 session_start();
+require 'utils/auth-functions/customer-page/kick-res-owner.php';
+
 require './config/connection.php';
 
 
 
-if (isset($_GET['restaurant_id']) && $_SESSION['Role'] === "C") {
+if (isset($_GET['restaurant_id'])) {
   $id = mysqli_real_escape_string($con, $_GET['restaurant_id']);
 
   $sql = "SELECT id , burgerName , burger_price , Extras , quantity , user_name name FROM burgers b , user u WHERE b.user_added_id = ? AND u.user_id = ?";
@@ -22,8 +24,6 @@ if (isset($_GET['restaurant_id']) && $_SESSION['Role'] === "C") {
   } else {
     echo 'error in connection' . mysqli_error($con);
   }
-} else {
-  header('Location:index.php');
 }
 
 ?>

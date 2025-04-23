@@ -1,6 +1,7 @@
 <?php
 session_start();
-// connect
+require 'utils/auth-functions/customer-page/kick-res-owner.php';
+
 require 'config/connection.php';
 ?>
 

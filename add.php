@@ -1,13 +1,8 @@
 <?php
 session_start();
-require 'config/connection.php';
+require 'utils/auth-functions/owner-page/customer-kick.php';
 
-if (empty($_SESSION['cUserEmail']) && empty($_SESSION['userName']) && $_SESSION['Role'] !== "R") {
-  echo "<div class=\"p-24 text-4xl font-bold\">
-          Sorry guest are not allowed to enter
-        </div>";
-  exit;
-}
+require 'config/connection.php';
 
 $errors = array('BurgerName' => '', 'price' => '', 'Extras' => '', 'quantity' => '');
 $burName = $price = $Extras = $quantity =  '';
@@ -77,8 +72,7 @@ if (isset($_POST['submit']) && !empty($_SESSION['userName'])) {
       echo 'error in the connection ' . mysqli_error($con);
     }
   }
-} // end of 
-
+}
 ?>
 
 

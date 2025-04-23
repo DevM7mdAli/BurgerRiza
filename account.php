@@ -1,6 +1,7 @@
 <?php
 session_start();
-// connect
+require 'utils/auth-functions/guest-kick-to-log.php';
+
 require 'config/connection.php';
 ?>
 
