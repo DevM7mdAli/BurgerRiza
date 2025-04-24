@@ -107,6 +107,7 @@ if (isset($_POST['submit'])) {
               type="phone"
               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
               name="phone"
+              maxlength="20"
               id="phone"
               placeholder="+996 5x xxx xxxx"
               required>

@@ -1,5 +1,5 @@
 <div class="text-3xl text-center p-12 min-h-screen">
-  <h1 class="pb-24 font-bold"><?php echo htmlspecialchars($_SESSION["userName"]) . " main menu" ?></h1>
+  <h1 class="pb-24 font-bold"><?php echo htmlspecialchars($_SESSION["firstName"]) . " main menu" ?></h1>
   <input type="search" class="border border-black rounded-lg px-4 py-2 text-center mb-28" placeholder="Search here..">
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-12" id="theBody">
     <?php foreach ($output as $burger) : ?>

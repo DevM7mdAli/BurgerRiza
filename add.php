@@ -6,7 +6,7 @@ require 'config/connection.php';
 
 $errors = array('BurgerName' => '', 'price' => '', 'Extras' => '', 'quantity' => '');
 $burName = $price = $Extras = $quantity =  '';
-if (isset($_POST['submit']) && !empty($_SESSION['userName'])) {
+if (isset($_POST['submit']) && !empty($_SESSION['firstName'])) {
 
   if (empty($_POST['BurgerName'])) {
     $errors['BurgerName'] = "burger name required" . "<br />";
@@ -62,7 +62,7 @@ if (isset($_POST['submit']) && !empty($_SESSION['userName'])) {
     $sql = "INSERT INTO burgers (email , burgerName , burger_price , quantity , Extras , user_added_id) VALUES (? , ? , ? , ? , ? , ?)";
 
     if ($prStmt = mysqli_prepare($con, $sql)) {
-      mysqli_stmt_bind_param($prStmt, "ssdisi", $_SESSION['cUserEmail'], $burName, $price, $quantity, $Extras, $_SESSION['cUserId']);
+      mysqli_stmt_bind_param($prStmt, "ssdisi", $_SESSION['email'], $burName, $price, $quantity, $Extras, $_SESSION['id']);
       if (mysqli_stmt_execute($prStmt)) {
         header('Location:index.php');
       } else {

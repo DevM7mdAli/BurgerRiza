@@ -102,8 +102,8 @@ require 'utils/not-found/details-not-found.php'
         <h3>email of person who created it: <?php echo htmlspecialchars($burger['email']) ?></h3>
         <p>created_at: <?php echo htmlspecialchars(date($burger['created_at'])) ?></p>
         <!-- delete button -->
-        <?php if (!empty($_SESSION['userName']) && !empty($_SESSION['cUserEmail'])) { ?>
-          <?php if ($burger['email'] === $_SESSION['cUserEmail']) { ?>
+        <?php if (!empty($_SESSION['firstName']) && !empty($_SESSION['email'])) { ?>
+          <?php if ($burger['email'] === $_SESSION['email']) { ?>
             <form
               action="<?php echo $_SERVER['PHP_SELF'] ?>"
               method="POST"

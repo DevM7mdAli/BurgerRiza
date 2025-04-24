@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
 //! kicking out if authed
 require 'utils/auth-functions/auth-kick-out-of-log.php';
@@ -13,13 +15,13 @@ if (isset($_POST['submit'])) {
   $enPwd = md5($password);
   $error = "";
 
-  $sql = "SELECT * FROM user WHERE email = ? AND user_password = ? AND account_type = ?";
+  $sql = "SELECT * FROM user WHERE email = ? AND password = ? AND account_role = ?";
 
   if ($prStmt = mysqli_prepare($con, $sql)) {
-    if (strtoupper($accountType) === "R") {
-      $type = "R";
+    if (strtoupper($accountType) === "owner") {
+      $type = "owner";
     } else {
-      $type = "C";
+      $type = "customer";
     }
     mysqli_stmt_bind_param($prStmt, 'sss', $email, $enPwd, $type);
     if (mysqli_stmt_execute($prStmt)) {
@@ -35,10 +37,10 @@ if (isset($_POST['submit'])) {
   }
 
   if ($user) {
-    $_SESSION['userName'] = $user['user_name'];
-    $_SESSION['cUserEmail'] = $user['email'];
-    $_SESSION['cUserId'] = $user['user_id'];
-    $_SESSION['Role'] = $user['account_type'];
+    $_SESSION['firstName'] = $user['first_name'];
+    $_SESSION['email'] = $user['email'];
+    $_SESSION['id'] = $user['id'];
+    $_SESSION['role'] = $user['account_role'];
     if (isset($_POST['remember'])) {
       $remember = $_POST['remember'];
       setcookie('remember_email', $user['email'], time() + 3600 * 24 * 365);
@@ -77,7 +79,7 @@ if (isset($_POST['submit'])) {
               type="radio"
               id="Restaurant"
               name="type"
-              value="R"
+              value="owner"
               required
               checked>
             restaurant
@@ -87,7 +89,7 @@ if (isset($_POST['submit'])) {
               type="radio"
               id="Customers"
               name="type"
-              value="C">
+              value="customer">
             customer</label>
         </div>
 

@@ -1,5 +1,5 @@
 <?php
-if ($_SESSION['Role'] !== "C") {
+if ($_SESSION['role'] !== "customer") {
   header('Location:index.php');
   die;
 }

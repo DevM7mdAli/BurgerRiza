@@ -5,10 +5,11 @@ if (isset($_POST['logOut'])) {
   session_unset();
   session_destroy();
   header('Location:index.php');
+  exit;
 }
 $navList;
-if (!empty($_SESSION['Role'])) {
-  if ($_SESSION['Role'] === "R") {
+if (!empty($_SESSION['role'])) {
+  if ($_SESSION['role'] === "owner") {
     $navList = [
       'Add to your menu' => "add.php",
     ];
@@ -55,7 +56,7 @@ if (!empty($_SESSION['Role'])) {
           <a class="flex items-center gap-14 font-bold text-lg text-white bg-primary/20 rounded-2xl p-2" href="account.php">
             <div class="flex items-center gap-1">
               <img src="assets/Logo.png" class="w-12 h-12 rounded-full bg-gray-400 p-0.5" />
-              <p class="text-sm sm:text-lg"> Hello <?php echo $_SESSION['userName'] ?? "guest" ?></p>
+              <p class="text-sm sm:text-lg"> Hello <?php echo $_SESSION['firstName'] ?? "guest" ?></p>
             </div>
           </a>
         </div>
@@ -64,7 +65,7 @@ if (!empty($_SESSION['Role'])) {
         ?>
         <div class="hidden sm:block">
           <div class="flex gap-3 items-center">
-            <?php if (!empty($_SESSION['Role'])) { ?>
+            <?php if (!empty($_SESSION['role'])) { ?>
               <?php foreach ($navList as $title => $link) {  ?>
                 <div>
                   <a href=<?php echo $link ?> class="hover:underline py-2 px-4 bg-white rounded-lg"><?php echo $title ?></a>
@@ -74,7 +75,7 @@ if (!empty($_SESSION['Role'])) {
             }
             ?>
 
-            <?php if (empty($_SESSION['userName'])) { ?>
+            <?php if (empty($_SESSION['firstName'])) { ?>
               <div>
                 <a href="sign-in.php" class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700">Sign In</a>
               </div>
@@ -94,7 +95,7 @@ if (!empty($_SESSION['Role'])) {
     ?>
     <div class="hidden bg-white shadow-lg p-4" id="menuMobileBody">
       <ul class="space-y-4">
-        <?php if (!empty($_SESSION['Role'])) { ?>
+        <?php if (!empty($_SESSION['role'])) { ?>
           <?php foreach ($navList as $title => $link) {  ?>
             <li>
               <a href=<?php echo $link ?> class="hover:underline"><?php echo $title ?></a>
@@ -104,7 +105,7 @@ if (!empty($_SESSION['Role'])) {
         }
         ?>
 
-        <?php if (empty($_SESSION['userName'])) { ?>
+        <?php if (empty($_SESSION['firstName'])) { ?>
           <li>
             <a href="sign-in.php" class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700">Sign In</a>
           </li>

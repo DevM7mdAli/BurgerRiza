@@ -1,5 +1,5 @@
 <?php
-if ($_SESSION['Role'] !== "R") {
+if ($_SESSION['role'] !== "owner") {
   echo "<div style='padding: 6rem; font-size: 2.25rem; font-weight: bold;'>
           Sorry only owners are allowed to enter
         </div>";

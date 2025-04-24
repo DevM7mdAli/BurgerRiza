@@ -7,7 +7,7 @@ if (!$burger) {
 
 
 #Check if he has auth to see
-if (empty($_SESSION['cUserId']) || $burger['user_added_id'] != $_SESSION['cUserId']) {
+if (empty($_SESSION['id']) || $burger['user_added_id'] != $_SESSION['id']) {
   echo "<h1 class=\"text-5xl text-center p-4\">You don't have the auth</h1>";
   exit;
 }

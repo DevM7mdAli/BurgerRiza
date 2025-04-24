@@ -16,7 +16,7 @@ if ($_SESSION['role'] === "owner") {
   FROM product p
   INNER JOIN restaurant r ON r.id = p.owner_id
   INNER JOIN user u ON u.id = r.owner_id
-  WHERE u.id = {$_SESSION['cUserId']}
+  WHERE u.id = {$_SESSION['id']}
   ORDER BY p.time_created
   ";
 } else {
