@@ -1,6 +1,4 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 session_start();
 
 require 'config/connection.php';
@@ -22,7 +20,7 @@ if ($_SESSION['role'] === "owner") {
   ORDER BY p.time_created
   ";
 } else {
-  $query = "SELECT * FROM restaurant ORDER BY user_time_created";
+  $query = "SELECT * FROM restaurant";
 }
 
 $result = mysqli_query($con, $query);
