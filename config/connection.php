@@ -1,13 +1,13 @@
 <?php
 
 $hostName = 'localhost';
-$userName = 'Burgerz';
-$userPassword = 'BRizza1234@';
-$dbName = 'burgerriza';
-$portNum = 3306;
+$userName = 'root';
+$userPassword = '';
+$dbName = 'riza';
+$portNum = 3309;
 
 $con = mysqli_connect($hostName, $userName, $userPassword, $dbName, $portNum);
 
 if (!$con) {
-  die("Connection failed: " . mysqli_connect_error());
+  echo ("Connection failed: " . mysqli_connect_error());
 }

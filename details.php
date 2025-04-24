@@ -1,6 +1,7 @@
 <?php
 session_start();
-// connect
+require 'utils/auth-functions/guest-kick-to-log.php';
+
 require 'config/connection.php';
 
 // "/^[a-zA-Z -]+$/"
@@ -64,15 +65,7 @@ if (isset($_GET['id'])) {
 }
 
 # security check
-if (!$burger) {
-  echo "<h1 class=\"text-5xl text-center p-4\"> Error not found </h1>";
-  exit;
-}
-
-if (empty($_SESSION['cUserId']) || $burger['user_added_id'] != $_SESSION['cUserId']) {
-  echo "<h1 class=\"text-5xl text-center p-4\">You don't have the auth</h1>";
-  exit;
-}
+require 'utils/not-found/details-not-found.php'
 
 
 ?>
@@ -109,8 +102,8 @@ if (empty($_SESSION['cUserId']) || $burger['user_added_id'] != $_SESSION['cUserI
         <h3>email of person who created it: <?php echo htmlspecialchars($burger['email']) ?></h3>
         <p>created_at: <?php echo htmlspecialchars(date($burger['created_at'])) ?></p>
         <!-- delete button -->
-        <?php if (!empty($_SESSION['userName']) && !empty($_SESSION['cUserEmail'])) { ?>
-          <?php if ($burger['email'] === $_SESSION['cUserEmail']) { ?>
+        <?php if (!empty($_SESSION['firstName']) && !empty($_SESSION['email'])) { ?>
+          <?php if ($burger['email'] === $_SESSION['email']) { ?>
             <form
               action="<?php echo $_SERVER['PHP_SELF'] ?>"
               method="POST"
@@ -126,7 +119,7 @@ if (empty($_SESSION['cUserId']) || $burger['user_added_id'] != $_SESSION['cUserI
 
     <!-- Form body to change -->
     <form
-      class=" flex-col items-start justify-center gap-8 text-lg hidden p-8 bg-primary rounded-lg"
+      class="flex-col items-start justify-center gap-8 text-lg hidden p-8 bg-primary rounded-lg"
       id="editDetails"
       action="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $burger['id'] ?>"
       method="POST">

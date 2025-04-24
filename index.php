@@ -1,13 +1,26 @@
 <?php
 session_start();
-// connect
+
 require 'config/connection.php';
 
+
+// Check if user is logged in and role is set
+if (!isset($_SESSION['role'])) {
+  header('Location: sign-in.php');
+  exit();
+}
+
 // fetch all burgerz 
-if ($_SESSION['Role'] === "R") {
-  $query = "SELECT * FROM burgers WHERE user_added_id={$_SESSION['cUserId']}  ORDER BY created_at";
+if ($_SESSION['role'] === "owner") {
+  $query = "SELECT p.*
+  FROM product p
+  INNER JOIN restaurant r ON r.id = p.owner_id
+  INNER JOIN user u ON u.id = r.owner_id
+  WHERE u.id = {$_SESSION['id']}
+  ORDER BY p.time_created
+  ";
 } else {
-  $query = "SELECT user_id , user_name  FROM user WHERE account_type='R' ORDER BY user_time_created";
+  $query = "SELECT * FROM restaurant";
 }
 
 $result = mysqli_query($con, $query);
@@ -27,14 +40,12 @@ mysqli_close($con);
 <?php require('./template/header.php') ?>
 
 
-<?php if ($_SESSION['Role'] === "R") {
+<?php if ($_SESSION['Role'] === "owner") {
   require('./template/index/restaurant.php');
-} elseif ($_SESSION['Role'] === "C") {
-  require('./template/index/customer.php');
 } else {
-  header('Location:sign-in.php');
-} ?>
-
+  require('./template/index/customer.php');
+}
+?>
 
 <?php require('./template/footer.php') ?>
 
