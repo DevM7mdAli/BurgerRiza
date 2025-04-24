@@ -16,7 +16,7 @@ if (isset($_POST['submit'])) {
   $accountType = mysqli_real_escape_string($con, $_POST['type']);
   $cPwd = mysqli_real_escape_string($con, $_POST['confirmPassword']);
 
-  $target_file = 'upload/' . basename($avatar["name"]);
+  $target_file = 'uploads/' . basename($avatar["name"]);
 
   if ($pwd === $cPwd) {
     $enPwd = md5($pwd);
@@ -30,7 +30,7 @@ if (isset($_POST['submit'])) {
       }
       mysqli_stmt_bind_param($prStmt, 'sssssss', $email, $enPwd, $type, $firstName, $lastName, $target_file, $phone);
       if (mysqli_stmt_execute($prStmt)) {
-        uploadFile('upload', $avatar);
+        uploadFile('uploads/', $avatar);
         mysqli_stmt_close($prStmt);
         mysqli_close($con);
         header('Location:sign-in.php');
