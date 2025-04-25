@@ -41,6 +41,7 @@ if (isset($_POST['submit'])) {
     $_SESSION['email'] = $user['email'];
     $_SESSION['id'] = $user['id'];
     $_SESSION['role'] = $user['account_role'];
+    $_SESSION['avatar'] = $user['avatar'];
     if (isset($_POST['remember'])) {
       $remember = $_POST['remember'];
       setcookie('remember_email', $user['email'], time() + 3600 * 24 * 365);
