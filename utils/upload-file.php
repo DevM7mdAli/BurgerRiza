@@ -1,47 +1,44 @@
 <?php
 function uploadFile($targetDir, $file)
 {
+  // Create directory if it doesn't exist
+  if (!file_exists($targetDir)) {
+    mkdir($targetDir, 0777, true);
+  }
+
   $uploadOk = 1;
-  $target_file = $targetDir . basename($file["name"]);
-  $checkIfImage = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+  $fileName = basename($file["name"]);
+  $target_file = $targetDir . '/' . $fileName;
+  $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
+  // Check if image file is actual image
   $check = getimagesize($file["tmp_name"]);
-  if ($check !== false) {
-    echo "File is an image - " . $check["mime"] . ".";
-    $uploadOk = 1;
-  } else {
-    echo "File is not an image.";
-    $uploadOk = 0;
+  if ($check === false) {
+    return false;
   }
 
-
-  // Check if file already exists
-  if (file_exists($target_file)) {
-    echo "Sorry, file already exists.";
-    $uploadOk = 0;
-  }
-
-  // Check file size
-  if ($_FILES["fileToUpload"]["size"] > 500000) {
-    echo "Sorry, your file is too large.";
-    $uploadOk = 0;
+  // Check file size (500KB limit)
+  if ($file["size"] > 500000) {
+    return false;
   }
 
   // Allow certain file formats
-  if ($checkIfImage != "jpg" && $checkIfImage != "png" && $checkIfImage != "jpeg" && $checkIfImage != "gif") {
-    echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-    $uploadOk = 0;
+  if (!in_array($imageFileType, ["jpg", "jpeg", "png", "gif"])) {
+    return false;
   }
 
-  // Check if $uploadOk is set to 0 by an error
-  if ($uploadOk == 0) {
-    echo "Sorry, your file was not uploaded.";
-    // if everything is ok, try to upload file
-  } else {
-    if (move_uploaded_file($file["tmp_name"], $target_file)) {
-      echo "The file " . htmlspecialchars(basename($file["name"])) . " has been uploaded.";
-    } else {
-      echo "Sorry, there was an error uploading your file.";
-    }
+  // If file exists, rename it
+  $counter = 1;
+  $fileNameWithoutExt = pathinfo($fileName, PATHINFO_FILENAME);
+  while (file_exists($target_file)) {
+    $fileName = $fileNameWithoutExt . '_' . $counter . '.' . $imageFileType;
+    $target_file = $targetDir . '/' . $fileName;
+    $counter++;
   }
+
+  if (move_uploaded_file($file["tmp_name"], $target_file)) {
+    return $target_file; // Return the file path that was actually used
+  }
+
+  return false;
 }

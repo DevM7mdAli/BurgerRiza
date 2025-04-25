@@ -16,19 +16,30 @@ if (isset($_POST['submit'])) {
   $accountType = mysqli_real_escape_string($con, $_POST['type']);
   $cPwd = mysqli_real_escape_string($con, $_POST['confirmPassword']);
 
-  $target_file = 'uploads/' . basename($avatar["name"]);
-
   if ($pwd === $cPwd) {
     $enPwd = md5($pwd);
     $sql = "INSERT INTO user (email, password, account_role, first_name, last_name, avatar, phone) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     if ($prStmt = mysqli_prepare($con, $sql)) {
-      if (strtoupper($accountType) === "owner") {
+      if (strtolower($accountType) === "owner") {
         $type = "owner";
       } else {
         $type = "customer";
       }
-      mysqli_stmt_bind_param($prStmt, 'sssssss', $email, $enPwd, $type, $firstName, $lastName, $target_file, $phone);
+
+      // Handle file upload first
+      $avatarPath = "";
+      if (isset($avatar) && $avatar['error'] === UPLOAD_ERR_OK) {
+        $uploadResult = uploadFile('uploads', $avatar);
+        if ($uploadResult) {
+          $avatarPath = $uploadResult;
+        } else {
+          echo "Error uploading file";
+          exit();
+        }
+      }
+
+      mysqli_stmt_bind_param($prStmt, 'sssssss', $email, $enPwd, $type, $firstName, $lastName, $avatarPath, $phone);
       if (mysqli_stmt_execute($prStmt)) {
         uploadFile('uploads/', $avatar);
         mysqli_stmt_close($prStmt);
