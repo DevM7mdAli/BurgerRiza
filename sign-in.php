@@ -1,6 +1,4 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 session_start();
 //! kicking out if authed
 require 'utils/auth-functions/auth-kick-out-of-log.php';
@@ -18,7 +16,7 @@ if (isset($_POST['submit'])) {
   $sql = "SELECT * FROM user WHERE email = ? AND password = ? AND account_role = ?";
 
   if ($prStmt = mysqli_prepare($con, $sql)) {
-    if (strtoupper($accountType) === "owner") {
+    if (strtolower($accountType) === "owner") {
       $type = "owner";
     } else {
       $type = "customer";
@@ -41,6 +39,7 @@ if (isset($_POST['submit'])) {
     $_SESSION['email'] = $user['email'];
     $_SESSION['id'] = $user['id'];
     $_SESSION['role'] = $user['account_role'];
+    $_SESSION['avatar'] = $user['avatar'];
     if (isset($_POST['remember'])) {
       $remember = $_POST['remember'];
       setcookie('remember_email', $user['email'], time() + 3600 * 24 * 365);

@@ -17,7 +17,7 @@ require 'config/connection.php';
 
             <div class="flex justify-center">
                 <img
-                    src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMjZpMTd0b2lsMzhrMmdxZjJmd2E3bTlrYjJuZGl5N3R1MDl1a3BucSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/10bxTLrpJNS0PC/giphy.gif"
+                    src="<?php echo $_SESSION['avatar'] ?>"
                     alt="Profile Image"
                     class="w-24 h-24 rounded-full border-4 border-white object-cover">
             </div>
