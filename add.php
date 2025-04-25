@@ -1,30 +1,26 @@
 <?php
 session_start();
 require 'utils/auth-functions/owner-page/customer-kick.php';
+require 'utils/upload-file.php';
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 
 require 'config/connection.php';
 
-$errors = array('BurgerName' => '', 'price' => '', 'Extras' => '', 'quantity' => '');
-$burName = $price = $Extras = $quantity =  '';
+$errors = array('ProductName' => '', 'price' => '', 'quantity' => '');
+$productName = $price = $quantity =  '';
 if (isset($_POST['submit']) && !empty($_SESSION['firstName'])) {
 
-  if (empty($_POST['BurgerName'])) {
-    $errors['BurgerName'] = "burger name required" . "<br />";
+  if (empty($_POST['ProductName'])) {
+    $errors['ProductName'] = "burger name required" . "<br />";
   } else {
-    $burName = htmlspecialchars($_POST['BurgerName']);
-    if (!preg_match('/^[a-zA-Z\s]+$/', $burName)) {
-      $errors['BurgerName'] = "burger name must be letters only" . "<br />";
+    $productName = htmlspecialchars($_POST['ProductName']);
+    if (!preg_match('/^[a-zA-Z\s]+$/', $productName)) {
+      $errors['ProductName'] = "burger name must be letters only" . "<br />";
     }
   }
 
-  if (empty($_POST['Extras'])) {
-    $errors['Extras'] = "Extras required" . "<br />";
-  } else {
-    $Extras = htmlspecialchars($_POST['Extras']);
-    if (!preg_match('/^([a-zA-Z\s]+)(,\s*[a-zA-Z\s]*)*$/', $Extras)) {
-      $errors['Extras'] = 'extras must be separated by comma' . "<br />";
-    }
-  }
 
   if (empty($_POST['price'])) {
     $errors['price'] = "price required" . "<br />";
@@ -53,16 +49,18 @@ if (isset($_POST['submit']) && !empty($_SESSION['firstName'])) {
     }
   }
 
+
   if (!array_filter($errors)) {
-    $burName = mysqli_real_escape_string($con, $_POST['BurgerName']);
+    $productImg = $_FILES['img'];
+    $productImgPath = uploadFile('uploads/product', $productImg);
+    $productName = mysqli_real_escape_string($con, $_POST['ProductName']);
     $price = mysqli_real_escape_string($con, $_POST['price']);
-    $Extras = mysqli_real_escape_string($con, $_POST['Extras']);
 
     //sql to insert
-    $sql = "INSERT INTO burgers (email , burgerName , burger_price , quantity , Extras , user_added_id) VALUES (? , ? , ? , ? , ? , ?)";
+    $sql = "INSERT INTO product (name, price, quantity, restaurant_id, img) VALUES (? , ? , ? , ? , ?)";
 
     if ($prStmt = mysqli_prepare($con, $sql)) {
-      mysqli_stmt_bind_param($prStmt, "ssdisi", $_SESSION['email'], $burName, $price, $quantity, $Extras, $_SESSION['id']);
+      mysqli_stmt_bind_param($prStmt, "sdiis", $productName, $price, $quantity, $_SESSION['owner'], $productImgPath);
       if (mysqli_stmt_execute($prStmt)) {
         header('Location:index.php');
       } else {
@@ -97,7 +95,7 @@ if (isset($_POST['submit']) && !empty($_SESSION['firstName'])) {
 </style>
 <section class="text-3xl text-center p-12 flex flex-col justify-center px-24  gap-4 min-h-screen">
   Add form
-  <form class="flex flex-col justify-center items-start gap-y-4 bg-white rounded-lg p-8" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST" id="addForm">
+  <form class="flex flex-col justify-center items-start gap-y-4 bg-white rounded-lg p-8" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST" id="addForm" enctype="multipart/form-data">
 
     <div class="w-full flex">
       <input type="submit" name="submit" value="submit" class="p-4 text-xl font-semibold mt-2 bg-red-500 rounded-xl text-white w-full">
@@ -105,13 +103,10 @@ if (isset($_POST['submit']) && !empty($_SESSION['firstName'])) {
   </form>
   <div class="py-4 text-red-400 flex flex-col">
     <div>
-      <?php echo $errors['BurgerName'] ?>
+      <?php echo $errors['ProductName'] ?>
     </div>
     <div>
       <?php echo $errors['price'] ?>
-    </div>
-    <div>
-      <?php echo $errors['Extras'] ?>
     </div>
   </div>
   </div>
@@ -120,9 +115,9 @@ if (isset($_POST['submit']) && !empty($_SESSION['firstName'])) {
 <script>
   const inputs = [{
       "type": "text",
-      "name": "Burger name",
-      "code": "BurgerName",
-      "value": "<?php echo htmlspecialchars($burName) ?>"
+      "name": "product name",
+      "code": "ProductName",
+      "value": "<?php echo htmlspecialchars($productName) ?>"
 
     },
     {
@@ -137,9 +132,8 @@ if (isset($_POST['submit']) && !empty($_SESSION['firstName'])) {
       "value": "<?php echo htmlspecialchars($quantity) ?>"
     },
     {
-      "type": "text",
-      "name": "Extras",
-      "value": "<?php echo htmlspecialchars($Extras) ?>"
+      "type": "file",
+      "name": "img",
     },
   ]
 
