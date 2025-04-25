@@ -18,7 +18,7 @@ if (isset($_POST['submit'])) {
   $sql = "SELECT * FROM user WHERE email = ? AND password = ? AND account_role = ?";
 
   if ($prStmt = mysqli_prepare($con, $sql)) {
-    if (strtoupper($accountType) === "owner") {
+    if (strtolower($accountType) === "owner") {
       $type = "owner";
     } else {
       $type = "customer";
