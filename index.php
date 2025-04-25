@@ -40,7 +40,7 @@ mysqli_close($con);
 <?php require('./template/header.php') ?>
 
 
-<?php if ($_SESSION['Role'] === "owner") {
+<?php if ($_SESSION['role'] === "owner") {
   require('./template/index/restaurant.php');
 } else {
   require('./template/index/customer.php');
