@@ -4,20 +4,17 @@ require 'utils/auth-functions/guest-kick-to-log.php';
 
 require 'config/connection.php';
 
-// "/^[a-zA-Z -]+$/"
-
 // edit the detail
 if (isset($_POST['edit']) && isset($_GET['id'])) {
-  $burgerId = mysqli_real_escape_string($con, $_GET['id']);
-  $burgerName = mysqli_real_escape_string($con, $_POST['burgerName']);
-  $burgerPrice = mysqli_real_escape_string($con, $_POST['burgerPrice']);
-  $extras = mysqli_real_escape_string($con, $_POST['extras']);
-  $quantity = mysqli_real_escape_string($con, $_POST['burgerQuantity']);
+  $productId = mysqli_real_escape_string($con, $_GET['id']);
+  $productName = mysqli_real_escape_string($con, $_POST['productName']);
+  $productPrice = mysqli_real_escape_string($con, $_POST['productPrice']);
+  $quantity = mysqli_real_escape_string($con, $_POST['productQuantity']);
 
-  $sql = 'UPDATE burgers SET burgerName = ? , burger_price = ? , Extras = ? , quantity = ? WHERE id = ?';
+  $sql = 'UPDATE product SET name = ? , price = ?, quantity = ? WHERE id = ?';
 
   if ($prStmt = mysqli_prepare($con, $sql)) {
-    mysqli_stmt_bind_param($prStmt, 'sdsii', $burgerName, $burgerPrice, $extras, $quantity, $burgerId);
+    mysqli_stmt_bind_param($prStmt, 'sdii', $productName, $productPrice, $quantity, $productId);
     if (mysqli_stmt_execute($prStmt)) {
     } else {
       echo 'error';
@@ -25,11 +22,11 @@ if (isset($_POST['edit']) && isset($_GET['id'])) {
   }
 }
 
-// deleting the burger
+// deleting the product
 if (isset($_POST['delete'])) {
   $id_to_delete = mysqli_real_escape_string($con, $_POST['id_to_delete']);
 
-  $sql = "DELETE FROM burgers WHERE id = ?";
+  $sql = "DELETE FROM product WHERE id = ?";
 
   if ($prStmt =  mysqli_prepare($con, $sql)) {
     mysqli_stmt_bind_param($prStmt, 'i', $id_to_delete);
@@ -47,13 +44,13 @@ if (isset($_POST['delete'])) {
 if (isset($_GET['id'])) {
   $id = mysqli_real_escape_string($con, $_GET['id']);
 
-  $sql = "SELECT * FROM burgers WHERE id = ?";
+  $sql = "SELECT * FROM product WHERE id = ?";
 
   if ($prStmt = mysqli_prepare($con, $sql)) {
     mysqli_stmt_bind_param($prStmt, 'i', $id);
     if (mysqli_stmt_execute($prStmt)) {
       $result = mysqli_stmt_get_result($prStmt);
-      $burger = mysqli_fetch_assoc($result);
+      $product = mysqli_fetch_assoc($result);
       mysqli_stmt_close($prStmt);
       mysqli_close($con);
     } else {
@@ -84,8 +81,8 @@ require 'utils/not-found/details-not-found.php'
     Details
   </h1>
   <div class="flex justify-end mx-24">
-    <button onclick="toggle()" class=" w-16 h-16 mt-2 " id="edit"><img src="https://static.thenounproject.com/png/5926334-200.png" alt="edit"></button>
-    <button onclick="toggle()" class=" w-16 h-16 mt-2 hidden" id="cancel"><img src="https://static.thenounproject.com/png/966946-200.png" alt="cancel"></button>
+    <button onclick="toggle()" class=" w-16 h-16 mt-2 " id="edit"><img src="assets/edit.png" alt="edit"></button>
+    <button onclick="toggle()" class=" w-16 h-16 mt-2 hidden" id="cancel"><img src="assets/cancel.png" alt="cancel"></button>
   </div>
 
 
@@ -94,22 +91,21 @@ require 'utils/not-found/details-not-found.php'
     <!--Displaying for when first enter no change just to delete -->
     <div id="showDetails" class="p-8 bg-primary rounded-lg">
       <div class="flex flex-col items-start gap-8 text-lg">
-        <h1>ID: <?php echo htmlspecialchars($burger['id']) ?></h1>
-        <h2>name of the burger: <?php echo htmlspecialchars($burger['burgerName']) ?></h2>
-        <h2>price of the burger: <?php echo htmlspecialchars($burger['burger_price']) ?>$</h2>
-        <h2>quantity of the burger: <?php echo htmlspecialchars($burger['quantity']) ?></h2>
-        <h2>Extras: <?php echo htmlspecialchars($burger['Extras']) ?></h2>
-        <h3>email of person who created it: <?php echo htmlspecialchars($burger['email']) ?></h3>
-        <p>created_at: <?php echo htmlspecialchars(date($burger['created_at'])) ?></p>
+        <img src="<?php echo $product['img'] ?? 'assets/burger.png' ?>" alt="<?php echo htmlspecialchars($product['name']) ?>" class="w-full">
+        <h1>ID: <?php echo htmlspecialchars($product['id']) ?></h1>
+        <h2>name of the product: <?php echo htmlspecialchars($product['name']) ?></h2>
+        <h2>price of the product: <?php echo htmlspecialchars($product['price']) ?>$</h2>
+        <h2>quantity of the product: <?php echo htmlspecialchars($product['quantity']) ?></h2>
+        <p>created_at: <?php echo htmlspecialchars(date($product['time_created'])) ?></p>
         <!-- delete button -->
-        <?php if (!empty($_SESSION['firstName']) && !empty($_SESSION['email'])) { ?>
-          <?php if ($burger['email'] === $_SESSION['email']) { ?>
+        <?php if (!empty($_SESSION['firstName']) && !empty($_SESSION['owner'])) { ?>
+          <?php if ($product['restaurant_id'] === $_SESSION['owner']) { ?>
             <form
               action="<?php echo $_SERVER['PHP_SELF'] ?>"
               method="POST"
               id="del"
               class="flex flex-grow w-full">
-              <input type="hidden" name="id_to_delete" value="<?php echo $burger['id'] ?>">
+              <input type="hidden" name="id_to_delete" value="<?php echo $product['id'] ?>">
               <input type="submit" name="delete" value="Delete" class="p-4 text-xl font-semibold mt-2 bg-red-500 rounded-xl text-white flex flex-grow">
             </form>
           <?php } ?>
@@ -121,67 +117,52 @@ require 'utils/not-found/details-not-found.php'
     <form
       class="flex-col items-start justify-center gap-8 text-lg hidden p-8 bg-primary rounded-lg"
       id="editDetails"
-      action="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $burger['id'] ?>"
+      action="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $product['id'] ?>"
       method="POST">
-      <div>
-        <h1
-          onmouseover="document.getElementById('notAllowed').classList.toggle('hidden')"
-          onmouseout="document.getElementById('notAllowed').classList.toggle('hidden')">
-          ID: <?php echo htmlspecialchars($burger['id']) ?>
+      <div
+        class="w-full"
+        onmouseover="document.getElementById('notAllowedImg').classList.toggle('hidden')"
+        onmouseout="document.getElementById('notAllowedImg').classList.toggle('hidden')">
+        <img src="<?php echo $product['img'] ?? 'assets/burger.png' ?>" alt="<?php echo htmlspecialchars($product['name']) ?>" class="w-full" />
+        <p class="text-sm text-red-500 hidden" id="notAllowedImg">the img is not allowed to be changed</p>
+      </div>
+      <div
+        onmouseover="document.getElementById('notAllowed').classList.toggle('hidden')"
+        onmouseout="document.getElementById('notAllowed').classList.toggle('hidden')">
+        <h1>
+          ID: <?php echo htmlspecialchars($product['id']) ?>
         </h1>
         <p class="text-sm text-red-500 hidden" id="notAllowed">the id is not allowed to be changed</p>
       </div>
       <!-- list of inputs  -->
-      <label>name of the burger:
+      <label>name of the product:
         <input
           type="text"
-          name="burgerName"
+          name="productName"
           class="p-0.5 border-2 rounded-md bg-primary"
-          value="<?php echo htmlspecialchars($burger['burgerName']) ?>">
+          value="<?php echo htmlspecialchars($product['name']) ?>">
       </label>
-      <label>price of the burger:
+      <label>price of the product:
         <input
           type="text"
-          name="burgerPrice"
+          name="productPrice"
           class="p-0.5 border-2 rounded-md bg-primary"
-          value="<?php echo htmlspecialchars($burger['burger_price']) ?>">
+          value="<?php echo htmlspecialchars($product['price']) ?>">
       </label>
-      <label>quantity of the burger:
+      <label>quantity of the product:
         <input
           type="text"
-          name="burgerQuantity"
+          name="productQuantity"
           class="p-0.5 border-2 rounded-md bg-primary"
           size="7"
-          value="<?php echo htmlspecialchars($burger['quantity']) ?>">
+          value="<?php echo htmlspecialchars($product['quantity']) ?>">
       </label>
-      <div class="flex flex-col gap-4 items-center">
-        <?php $index = 1;
-        foreach (explode(',', $burger['Extras']) as $burg) { ?>
-          <div class="flex gap-3" id="extras-<?php echo $index ?>">
-            <h2>Extras: <input onkeyup="collectExtras()" type="text"
-                class="p-0.5 border-2 rounded-md bg-primary" id="extrasIn" value="<?php echo htmlspecialchars($burg) ?>"></h2>
-            <div class="flex flex-wrap items-center gap-1">
-              <span onclick="console.log('test')" class="px-4 text-lg font-semibold bg-red-500 rounded-xl text-white">+</span>
-              <span onclick="console.log('test')" class="px-4 text-lg font-semibold bg-blue-500 rounded-xl text-white">-</span>
-            </div>
-          </div>
-        <?php $index++;
-        } ?>
-        <input type="text" class="hidden" name="extras" id="totalExtras">
-      </div>
-      <div>
-        <h3
-          onmouseover="document.getElementById('notAllowEmail').classList.toggle('hidden')"
-          onmouseout="document.getElementById('notAllowEmail').classList.toggle('hidden')">
-          email of person who created it: <?php echo htmlspecialchars($burger['email']) ?>
-        </h3>
-        <p class="text-sm text-red-500 hidden" id="notAllowEmail">the email is not allowed to be changed</p>
-      </div>
-      <div>
-        <p
-          onmouseover="document.getElementById('notAllow').classList.toggle('hidden')"
-          onmouseout="document.getElementById('notAllow').classList.toggle('hidden')">
-          created_at: <?php echo htmlspecialchars(date($burger['created_at'])) ?>
+
+      <div
+        onmouseover="document.getElementById('notAllow').classList.toggle('hidden')"
+        onmouseout="document.getElementById('notAllow').classList.toggle('hidden')">
+        <p>
+          created_at: <?php echo htmlspecialchars(date($product['time_created'])) ?>
         </p>
         <p class="text-sm text-red-500 hidden" id="notAllow">the created_at is not allowed to be changed</p>
       </div>
