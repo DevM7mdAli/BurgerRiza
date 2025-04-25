@@ -1,5 +1,7 @@
 <?php
 session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 require 'config/connection.php';
 
@@ -14,7 +16,7 @@ if (!isset($_SESSION['role'])) {
 if ($_SESSION['role'] === "owner") {
   $query = "SELECT p.*
   FROM product p
-  INNER JOIN restaurant r ON r.id = p.owner_id
+  INNER JOIN restaurant r ON r.id = p.restaurant_id
   INNER JOIN user u ON u.id = r.owner_id
   WHERE u.id = {$_SESSION['id']}
   ORDER BY p.time_created

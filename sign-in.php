@@ -1,6 +1,4 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 session_start();
 //! kicking out if authed
 require 'utils/auth-functions/auth-kick-out-of-log.php';
