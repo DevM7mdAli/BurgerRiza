@@ -3,12 +3,11 @@
 
   <?php foreach ($output as $rest) { ?>
     <div class="px-2 py-8 bg-white rounded-xl w-full h-36 flex flex-col justify-around ">
-      <img src="https://cdn-icons-png.freepik.com/512/948/948149.png" alt="icon" class="mx-auto h-24 w-24 -my-12 -top-10 relative bg-white shadow-md rounded-full object-fit">
+      <img src="assets/rest.png" alt="icon" class="mx-auto h-24 w-24 -my-12 -top-10 relative bg-white shadow-md rounded-full object-fit">
       <h1>Name of the Restaurant: <?php echo htmlspecialchars($rest['name']) ?></h1>
-      <a 
-      href = "tel:<?php echo htmlspecialchars($rest['phone'])?>"
-      >Phone: <?php echo htmlspecialchars($rest['phone']) ?></a>
-      <h2>Address: <?php echo htmlspecialchars($rest['address'])?></h2>
+      <a
+        href="tel:<?php echo htmlspecialchars($rest['phone']) ?>">Phone: <?php echo htmlspecialchars($rest['phone']) ?></a>
+      <h2>Address: <?php echo htmlspecialchars($rest['address']) ?></h2>
       <div class="text-red-500 border-t-4 text-center text-lg font-bold">
         <a href="restaurantMenu.php?restaurant_id=<?php echo htmlspecialchars($rest['id']) ?>">See the menu</a>
       </div>
