@@ -1,7 +1,6 @@
 <?php
 session_start();
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+require 'utils/upload-file.php';
 
 require 'config/connection.php';
 
@@ -55,11 +54,14 @@ if (isset($_POST['create_restaurant'])) {
   $name = mysqli_real_escape_string($con, $_POST['name']);
   $address = mysqli_real_escape_string($con, $_POST['address']);
   $phone = mysqli_real_escape_string($con, $_POST['phone']);
+  $img = $_FILES['img'];
 
-  $sql = "INSERT INTO restaurant (name, address, phone, owner_id) VALUES (?, ?, ?, ?)";
+  $imgPath = uploadFile('uploads/rest', $img);
+
+  $sql = "INSERT INTO restaurant (name, address, phone, img, owner_id) VALUES (?, ?, ?, ?, ?)";
 
   if ($stmt = mysqli_prepare($con, $sql)) {
-    mysqli_stmt_bind_param($stmt, 'sssi', $name, $address, $phone, $_SESSION['id']);
+    mysqli_stmt_bind_param($stmt, 'ssssi', $name, $address, $phone, $imgPath, $_SESSION['id']);
     if (mysqli_stmt_execute($stmt)) {
       header('Location: index.php');
       exit();

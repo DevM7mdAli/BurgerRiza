@@ -3,38 +3,53 @@ session_start();
 require 'utils/auth-functions/guest-kick-to-log.php';
 require 'config/connection.php';
 
-// Combined query to get user info and orders in one request
-$sql = "SELECT u.*, o.id as order_id, o.total as order_total, o.created_at,
-        (SELECT COUNT(*) FROM cart_item ci 
-        INNER JOIN cart c ON ci.cart_id = c.id 
-        WHERE c.user_id = o.user_id AND c.restaurant_id = o.restaurant_id) as item_count
-        FROM user u
-        LEFT JOIN order_table o ON u.id = o.user_id
-        WHERE u.id = ?
-        ORDER BY o.created_at DESC";
+// First get the user info
+$sql = "SELECT * FROM user WHERE id = ?";
+$stmt = mysqli_prepare($con, $sql);
+mysqli_stmt_bind_param($stmt, 'i', $_SESSION['id']);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$info = mysqli_fetch_assoc($result);
 
-if ($stmt = mysqli_prepare($con, $sql)) {
-    mysqli_stmt_bind_param($stmt, 'i', $_SESSION['id']);
-    if (mysqli_stmt_execute($stmt)) {
-        $result = mysqli_stmt_get_result($stmt);
-        $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
-        // First row contains user info
-        $info = array_intersect_key($rows[0], array_flip(['id', 'first_name', 'last_name', 'email', 'phone', 'account_role', 'avatar']));
-
-        // Filter out rows with order information
-        $orders = array_filter($rows, function ($row) {
-            return !empty($row['order_id']);
-        });
-
-        mysqli_stmt_close($stmt);
-        mysqli_close($con);
-    } else {
-        echo 'Error in prepare statement execute: ' . mysqli_error($con);
-    }
+// Different queries based on user role
+if ($info['account_role'] === 'owner') {
+    // For restaurant owners - get orders made to their restaurant
+    $sql = "SELECT o.id as order_id, o.total as order_total, o.created_at,
+            i.notes,
+            customer.first_name, customer.last_name, customer.email,
+            r.name as restaurant_name,
+            (SELECT COUNT(*) FROM cart_item ci 
+            INNER JOIN cart c ON ci.cart_id = c.id 
+            WHERE c.restaurant_id = r.id) as item_count
+            FROM restaurant r
+            INNER JOIN order_table o ON r.id = o.restaurant_id
+            INNER JOIN invoice i ON o.id = i.order_id
+            INNER JOIN user customer ON o.user_id = customer.id
+            WHERE r.owner_id = ?
+            ORDER BY o.created_at DESC";
 } else {
-    echo 'Error in connection: ' . mysqli_error($con);
+    // For customers - get their personal orders
+    $sql = "SELECT o.id as order_id, o.total as order_total, o.created_at,
+            i.notes,
+            r.name as restaurant_name,
+            (SELECT COUNT(*) FROM cart_item ci 
+            INNER JOIN cart c ON ci.cart_id = c.id 
+            WHERE c.user_id = o.user_id AND c.restaurant_id = o.restaurant_id) as item_count
+            FROM order_table o
+            INNER JOIN restaurant r ON o.restaurant_id = r.id
+            INNER JOIN invoice i ON o.id = i.order_id
+            WHERE o.user_id = ?
+            ORDER BY o.created_at DESC";
 }
+
+// Get orders
+$stmt = mysqli_prepare($con, $sql);
+mysqli_stmt_bind_param($stmt, 'i', $_SESSION['id']);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$orders = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+mysqli_close($con);
 ?>
 
 <!DOCTYPE html>
