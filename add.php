@@ -2,8 +2,6 @@
 session_start();
 require 'utils/auth-functions/owner-page/customer-kick.php';
 require 'utils/upload-file.php';
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
 
 require 'config/connection.php';

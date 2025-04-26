@@ -1,8 +1,61 @@
 <?php
 session_start();
 require 'utils/auth-functions/customer-page/kick-res-owner.php';
+require './config/connection.php';
 
-require 'config/connection.php';
+if (!isset($_SESSION['id'])) {
+  header('Location: sign-in.php');
+  exit();
+}
+
+mysqli_begin_transaction($con);
+try {
+  // Get cart info
+  $sql = "SELECT c.*, r.id as restaurant_id FROM cart c 
+            INNER JOIN restaurant r ON c.restaurant_id = r.id 
+            WHERE c.user_id = ?";
+
+  $stmt = mysqli_prepare($con, $sql);
+  mysqli_stmt_bind_param($stmt, 'i', $_SESSION['id']);
+  mysqli_stmt_execute($stmt);
+  $result = mysqli_stmt_get_result($stmt);
+  $cart = mysqli_fetch_assoc($result);
+
+  if ($cart) {
+    // Create order
+    $sql = "INSERT INTO order_table (user_id, restaurant_id, total) VALUES (?, ?, ?)";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'iid', $_SESSION['id'], $cart['restaurant_id'], $cart['total']);
+    mysqli_stmt_execute($stmt);
+    $order_id = mysqli_insert_id($con);
+
+    // Create invoice with note
+    $note = isset($_SESSION['cart_note']) ? $_SESSION['cart_note'] : '';
+    $sql = "INSERT INTO invoice (order_id, user_id, restaurant_id, notes, total) VALUES (?, ?, ?, ?, ?)";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'iiisd', $order_id, $_SESSION['id'], $cart['restaurant_id'], $note, $cart['total']);
+    mysqli_stmt_execute($stmt);
+
+    // Delete cart and items
+    $sql = "DELETE FROM cart WHERE id = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $cart['id']);
+    mysqli_stmt_execute($stmt);
+
+    // Clear cart note from session after complete
+    unset($_SESSION['cart_note']);
+
+    mysqli_commit($con);
+    header('Location: account.php');
+    exit();
+  } else {
+    throw new Exception("No cart found");
+  }
+} catch (Exception $e) {
+  mysqli_rollback($con);
+  echo "Error processing checkout: " . $e->getMessage();
+  echo "<br><a href='cart.php'>Return to cart</a>";
+}
 ?>
 
 <!DOCTYPE html>
