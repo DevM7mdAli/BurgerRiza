@@ -1,7 +1,5 @@
 <?php
 session_start();
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 require 'utils/auth-functions/customer-page/kick-res-owner.php';
 require './config/connection.php';
 
