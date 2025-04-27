@@ -167,7 +167,7 @@ if (isset($_SESSION['id'])) {
               </div>
             </div>
             <div class="flex items-center gap-4">
-              <span class="px-3 py-1 bg-gray-200 rounded">Qty: <?php echo htmlspecialchars($item['quantity']); ?></span>
+              <span class="px-3 py-1 bg-gray-200 rounded">Available quantity: <?php echo htmlspecialchars($item['quantity']); ?></span>
               <form method="post" class="inline">
                 <input type="hidden" name="delete_item" value="<?php echo $item['id']; ?>">
                 <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-500 transition duration-200">Delete</button>
