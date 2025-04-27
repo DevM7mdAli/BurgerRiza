@@ -77,13 +77,21 @@ if (isset($_GET['id']) && isset($_SESSION['id'])) {
     $product = mysqli_fetch_assoc($result);
 
     if ($product) {
-      // Check if user has an existing cart for this restaurant
-      $sql = "SELECT id, total FROM cart WHERE user_id = ? AND restaurant_id = ?";
+      // Check if user has any existing cart
+      $sql = "SELECT c.id, c.total, c.restaurant_id 
+              FROM cart c 
+              WHERE c.user_id = ?";
       $stmt = mysqli_prepare($con, $sql);
-      mysqli_stmt_bind_param($stmt, 'ii', $user_id, $product['restaurant_id']);
+      mysqli_stmt_bind_param($stmt, 'i', $user_id);
       mysqli_stmt_execute($stmt);
       $result = mysqli_stmt_get_result($stmt);
       $cart = mysqli_fetch_assoc($result);
+
+      // If cart exists but restaurant is different, redirect to restaurant menu
+      if ($cart && $cart['restaurant_id'] != $product['restaurant_id']) {
+        header('Location: restaurant-menu.php?restaurant_id=' . $product['restaurant_id'] . '&hasError=true');
+        exit();
+      }
 
       mysqli_begin_transaction($con);
       try {
