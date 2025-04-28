@@ -55,7 +55,7 @@ if (!empty($_SESSION['role'])) {
         <div>
           <a class="flex items-center gap-14 font-bold text-lg text-white bg-primary/20 rounded-2xl p-2" href="account.php">
             <div class="flex items-center gap-1">
-              <img src="<?php echo $_SESSION['avatar'] ?? "assets/Logo.png" ?>" class="w-12 h-12 rounded-full object-contain bg-gray-400 p-0.5" />
+              <img src="<?php echo $_SESSION['avatar'] ?? "assets/Logo.png" ?>" class="w-12 h-12 rounded-full object-contain bg-white p-0.5" />
               <p class="text-sm sm:text-lg"> Hello <?php echo $_SESSION['firstName'] ?? "guest" ?></p>
             </div>
           </a>
