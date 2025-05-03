@@ -16,11 +16,11 @@ if (isset($_POST['delete_item']) && isset($_SESSION['id'])) {
   mysqli_begin_transaction($con);
   try {
     // Get cart info and product price
-    $sql = "SELECT c.id as cart_id, c.total as cart_total, p.price 
-                FROM cart c 
-                INNER JOIN cart_item ci ON c.id = ci.cart_id 
-                INNER JOIN product p ON ci.product_id = p.id 
-                WHERE c.user_id = ? AND p.id = ?";
+    $sql = "SELECT c.id as cart_id, c.total as cart_total, p.price * ci.quantity as total_price 
+            FROM cart c 
+            INNER JOIN cart_item ci ON c.id = ci.cart_id 
+            INNER JOIN product p ON ci.product_id = p.id 
+            WHERE c.user_id = ? AND p.id = ?";
     $stmt = mysqli_prepare($con, $sql);
     mysqli_stmt_bind_param($stmt, 'ii', $user_id, $product_id);
     mysqli_stmt_execute($stmt);
@@ -28,17 +28,25 @@ if (isset($_POST['delete_item']) && isset($_SESSION['id'])) {
     $cart_info = mysqli_fetch_assoc($result);
 
     if ($cart_info) {
-      // Delete item
+      // Delete item from cart_item
       $sql = "DELETE FROM cart_item WHERE cart_id = ? AND product_id = ?";
       $stmt = mysqli_prepare($con, $sql);
       mysqli_stmt_bind_param($stmt, 'ii', $cart_info['cart_id'], $product_id);
       mysqli_stmt_execute($stmt);
 
       // Update cart total
-      $new_total = $cart_info['cart_total'] - $cart_info['price'];
+      $new_total = $cart_info['cart_total'] - $cart_info['total_price'];
 
-      if ($new_total <= 0) {
-        // If cart is empty, delete it
+      // Check if there are any items left in the cart
+      $sql = "SELECT COUNT(*) as item_count FROM cart_item WHERE cart_id = ?";
+      $stmt = mysqli_prepare($con, $sql);
+      mysqli_stmt_bind_param($stmt, 'i', $cart_info['cart_id']);
+      mysqli_stmt_execute($stmt);
+      $result = mysqli_stmt_get_result($stmt);
+      $item_count = mysqli_fetch_assoc($result)['item_count'];
+
+      if ($item_count == 0) {
+        // If no items left, delete the cart
         $sql = "DELETE FROM cart WHERE id = ?";
         $stmt = mysqli_prepare($con, $sql);
         mysqli_stmt_bind_param($stmt, 'i', $cart_info['cart_id']);
@@ -61,14 +69,15 @@ if (isset($_POST['delete_item']) && isset($_SESSION['id'])) {
   }
 }
 
+// Adding item to cart
 if (isset($_GET['id']) && isset($_SESSION['id'])) {
   $product_id = mysqli_real_escape_string($con, $_GET['id']);
   $user_id = $_SESSION['id'];
 
   // Get product and restaurant info
   $sql = "SELECT p.*, r.id as restaurant_id FROM product p 
-            INNER JOIN restaurant r ON p.restaurant_id = r.id 
-            WHERE p.id = ?";
+        INNER JOIN restaurant r ON p.restaurant_id = r.id 
+        WHERE p.id = ?";
 
   if ($stmt = mysqli_prepare($con, $sql)) {
     mysqli_stmt_bind_param($stmt, 'i', $product_id);
@@ -81,13 +90,14 @@ if (isset($_GET['id']) && isset($_SESSION['id'])) {
       $sql = "SELECT c.id, c.total, c.restaurant_id 
               FROM cart c 
               WHERE c.user_id = ?";
+
       $stmt = mysqli_prepare($con, $sql);
       mysqli_stmt_bind_param($stmt, 'i', $user_id);
       mysqli_stmt_execute($stmt);
       $result = mysqli_stmt_get_result($stmt);
       $cart = mysqli_fetch_assoc($result);
 
-      // If cart exists but restaurant is different, redirect to restaurant menu
+      //* If cart exists but restaurant is different, redirect to restaurant menu
       if ($cart && $cart['restaurant_id'] != $product['restaurant_id']) {
         header('Location: restaurant-menu.php?restaurant_id=' . $product['restaurant_id'] . '&hasError=true');
         exit();
@@ -114,11 +124,41 @@ if (isset($_GET['id']) && isset($_SESSION['id'])) {
           mysqli_stmt_execute($stmt);
         }
 
-        // Add item to cart_items
-        $sql = "INSERT INTO cart_item (cart_id, product_id, quantity) VALUES (?, ?, 1)";
+        $sql = "SELECT * FROM cart_item WHERE product_id = ? AND cart_id = ?";
         $stmt = mysqli_prepare($con, $sql);
-        mysqli_stmt_bind_param($stmt, 'ii', $cart_id, $product_id);
+        mysqli_stmt_bind_param($stmt, 'ii', $product_id, $cart_id);
         mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $existing_item = mysqli_fetch_assoc($result);
+
+        // Get current product quantity from products table
+        $sql = "SELECT quantity FROM product WHERE id = ?";
+        $stmt = mysqli_prepare($con, $sql);
+        mysqli_stmt_bind_param($stmt, 'i', $product_id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $product_info = mysqli_fetch_assoc($result);
+
+        if ($existing_item) {
+          // Check if increasing quantity would exceed available stock
+          if ($existing_item['quantity'] >= $product_info['quantity']) {
+            // Redirect back with error message
+            header('Location: restaurant-menu.php?restaurant_id=' . $product['restaurant_id'] . '&error=quantity');
+            exit();
+          }
+
+          // Update quantity of existing item
+          $sql = "UPDATE cart_item SET quantity = quantity + 1 WHERE cart_id = ? AND product_id = ?";
+          $stmt = mysqli_prepare($con, $sql);
+          mysqli_stmt_bind_param($stmt, 'ii', $cart_id, $product_id);
+          mysqli_stmt_execute($stmt);
+        } else {
+          // Add new item to cart_items
+          $sql = "INSERT INTO cart_item (cart_id, product_id, quantity) VALUES (?, ?, 1)";
+          $stmt = mysqli_prepare($con, $sql);
+          mysqli_stmt_bind_param($stmt, 'ii', $cart_id, $product_id);
+          mysqli_stmt_execute($stmt);
+        }
 
         mysqli_commit($con);
         header('Location: cart.php');
@@ -134,7 +174,7 @@ if (isset($_GET['id']) && isset($_SESSION['id'])) {
 // Get cart items
 $cart_items = [];
 if (isset($_SESSION['id'])) {
-  $sql = "SELECT ci.quantity, p.*, c.total as cart_total 
+  $sql = "SELECT ci.quantity as item_quantity , p.*, c.total as cart_total 
             FROM cart c 
             INNER JOIN cart_item ci ON c.id = ci.cart_id
             INNER JOIN product p ON ci.product_id = p.id
@@ -160,13 +200,14 @@ if (isset($_SESSION['id'])) {
         <?php foreach ($cart_items as $item) { ?>
           <div class="flex items-center justify-between p-3 border-b border-gray-200">
             <div class="flex items-center gap-4">
-              <img src="<?php echo htmlspecialchars($item['img']); ?>" class="w-16 h-16 object-cover rounded">
+              <img src="<?php echo htmlspecialchars($item['img']); ?>" class="w-16 h-16 object-contain rounded">
               <div>
                 <h2 class="text-xl font-semibold text-gray-700"><?php echo htmlspecialchars($item['name']); ?></h2>
-                <p class="text-gray-600">$<?php echo htmlspecialchars($item['price']); ?></p>
+                <p class="text-gray-600">$<?php echo htmlspecialchars($item['price'] * $item['item_quantity']); ?></p>
               </div>
             </div>
             <div class="flex items-center gap-4">
+              <span class="px-3 py-1 bg-gray-200 rounded">Qut: <?php echo htmlspecialchars($item['item_quantity']); ?></span>
               <span class="px-3 py-1 bg-gray-200 rounded">Available quantity: <?php echo htmlspecialchars($item['quantity']); ?></span>
               <form method="post" class="inline">
                 <input type="hidden" name="delete_item" value="<?php echo $item['id']; ?>">

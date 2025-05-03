@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_order'])) {
 $cart_items = [];
 $cart_total = 0;
 if (isset($_SESSION['id'])) {
-  $sql = "SELECT ci.quantity, p.*, c.total as cart_total, r.name as restaurant_name 
+  $sql = "SELECT ci.quantity as item_quantity, p.*, c.total as cart_total, r.name as restaurant_name 
             FROM cart c 
             INNER JOIN cart_item ci ON c.id = ci.cart_id
             INNER JOIN product p ON ci.product_id = p.id
@@ -129,8 +129,8 @@ if (isset($_SESSION['id'])) {
                 </div>
               </div>
               <div class="flex items-center gap-4">
-                <span class="px-3 py-1 bg-gray-200 rounded">Token Qty: <?php echo htmlspecialchars($item['quantity']); ?></span>
-                <span>$<?php echo number_format($item['price'] * $item['quantity'], 2); ?></span>
+                <span class="px-3 py-1 bg-gray-200 rounded">Token Qty: <?php echo htmlspecialchars($item['item_quantity']); ?></span>
+                <span>$<?php echo number_format($item['price'] * $item['item_quantity'], 2); ?></span>
               </div>
             </div>
           <?php endforeach; ?>
