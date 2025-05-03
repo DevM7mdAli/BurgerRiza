@@ -43,6 +43,9 @@ if (isset($_GET['restaurant_id'])) {
     <?php if (isset($_GET['hasError'])) {
       echo '<h1 class="w-full text-center text-red-400 text-5xl">you cant add from another restaurant</h1>';
     } ?>
+    <?php if (isset($_GET['error']) && $_GET['error'] === 'quantity') {
+      echo '<h1 class="w-full text-center text-red-400 text-5xl">Maximum available quantity reached</h1>';
+    } ?>
     <h1 class="text-center text-xl font-bold pt-3 pb-4 mb-12">Welcome to <?php echo $output[0]['restaurant_name'] ?> Menu</h1>
     <div class="grid grid-cols-1 sm:grid-cols-2 items-center px-12 py-4 gap-x-5 gap-y-16">
       <?php foreach ($output as $product) : ?>
