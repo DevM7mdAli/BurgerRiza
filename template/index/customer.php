@@ -7,9 +7,7 @@
       <h1>Name of the Restaurant: <?php echo htmlspecialchars($rest['name']) ?></h1>
       <a href="tel:<?php echo htmlspecialchars($rest['phone']) ?>">Phone: <?php echo htmlspecialchars($rest['phone']) ?></a>
       <h2>Address: <?php echo htmlspecialchars($rest['address']) ?></h2>
-      <div class="text-red-500 border-t-4 text-center text-lg font-bold">
-        <a href="restaurant-menu.php?restaurant_id=<?php echo htmlspecialchars($rest['id']) ?>">See the menu</a>
-      </div>
+      <a class="text-red-500 border-t-4 text-center text-lg font-bold" href="restaurant-menu.php?restaurant_id=<?php echo htmlspecialchars($rest['id']) ?>">See the menu</a>
     </div>
   <?php } ?>
 </div>

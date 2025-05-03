@@ -31,8 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_order'])) {
       mysqli_stmt_execute($stmt);
       $order_id = mysqli_insert_id($con);
 
-      // Get cart items to update product quantities
-      $sql = "SELECT ci.product_id, ci.quantity, p.quantity as stock_quantity 
+      // Get cart items to update product quantities and create order items
+      $sql = "SELECT ci.product_id, ci.quantity, p.quantity as stock_quantity, p.price 
                     FROM cart_item ci 
                     INNER JOIN product p ON ci.product_id = p.id 
                     WHERE ci.cart_id = ?";
@@ -41,16 +41,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_order'])) {
       mysqli_stmt_execute($stmt);
       $cart_items = mysqli_stmt_get_result($stmt);
 
-      // Update product quantities
+      // Update product quantities and create order items
       while ($item = mysqli_fetch_assoc($cart_items)) {
-        $new_quantity = $item['stock_quantity'] - $item['quantity'];
-        if ($new_quantity < 0) {
+        // Check if enough stock is available
+        if ($item['stock_quantity'] < $item['quantity']) {
           throw new Exception("Not enough stock for product ID: " . $item['product_id']);
         }
 
+        // Update product quantity
+        $new_quantity = $item['stock_quantity'] - $item['quantity'];
         $sql = "UPDATE product SET quantity = ? WHERE id = ?";
         $stmt = mysqli_prepare($con, $sql);
         mysqli_stmt_bind_param($stmt, 'ii', $new_quantity, $item['product_id']);
+        mysqli_stmt_execute($stmt);
+
+        // Create order item record
+        $item_total = $item['price'] * $item['quantity'];
+        $sql = "INSERT INTO order_item (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
+        $stmt = mysqli_prepare($con, $sql);
+        mysqli_stmt_bind_param($stmt, 'iiid', $order_id, $item['product_id'], $item['quantity'], $item_total);
         mysqli_stmt_execute($stmt);
       }
 

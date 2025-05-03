@@ -51,13 +51,14 @@ if (isset($_GET['restaurant_id'])) {
       <?php foreach ($output as $product) : ?>
         <div class="flex flex-col justify-around gap-2 px-2 pt-8 pb-4 bg-white rounded-xl">
           <img src="<?php echo $product['product_img'] ?>" alt="<?php echo $product['product_img'] ?>" class="w-24 h-24 block relative -top-10 -my-12 mx-auto bg-white shadow-md rounded-full">
-          <h1 id="burgerName"> Burger Name: <?php echo htmlspecialchars($product['product_name']) ?> </h1>
-          <h1 id="burgerPrice"> Burger price: <?php echo htmlspecialchars($product['price']) . "$" ?> </h1>
+          <h1 id="burgerName"> Product Name: <?php echo htmlspecialchars($product['product_name']) ?> </h1>
+          <h1 id="burgerPrice"> Product price: <?php echo htmlspecialchars($product['price']) . "$" ?> </h1>
           <h1 id="quantity"> Quantity: <?php echo htmlspecialchars($product['quantity']) ?> </h1>
 
-          <div class="text-red-500 border-t-4 text-center text-lg font-bold">
-            <a href="cart.php?id=<?php echo $product['id'] ?>">Add to cart</a>
-          </div>
+          <?php echo ($product['quantity'] != 0)
+            ? '<a class="text-red-500 border-t-4 text-center text-lg font-bold" href="cart.php?id=' . $product['id'] . '">Add to cart</a>'
+            : '<button class="text-gray-500 border-t-4 text-center" disabled="true">Out of stock</button>';
+          ?>
         </div>
       <?php endforeach; ?>
     </div>

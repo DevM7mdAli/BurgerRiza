@@ -10,9 +10,7 @@
         <h1 id="productName">Name: <?php echo htmlspecialchars($product['name']) ?></h1>
         <h1 id="productPrice">Price: <?php echo htmlspecialchars($product['price']) . "$" ?></h1>
         <h1 id="quantity">Quantity: <?php echo htmlspecialchars($product['quantity']) ?></h1>
-        <div class="text-red-500 border-t-4">
-          <a href="details.php?id=<?php echo $product['id'] ?>">more info</a>
-        </div>
+        <a class="text-red-500 border-t-4" href="details.php?id=<?php echo $product['id'] ?>">more info</a>
       </div>
     <?php endforeach; ?>
   <?php } else { ?>
