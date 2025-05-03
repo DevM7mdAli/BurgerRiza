@@ -88,6 +88,7 @@ if (isset($_POST['submit']) && !empty($_SESSION['firstName'])) {
 
   /* Firefox */
   input[type=number] {
+    appearance: textfield;
     -moz-appearance: textfield;
   }
 </style>
