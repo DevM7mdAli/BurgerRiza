@@ -91,7 +91,7 @@ require 'utils/not-found/details-not-found.php'
     <!--Displaying for when first enter no change just to delete -->
     <div id="showDetails" class="p-8 bg-primary rounded-lg">
       <div class="flex flex-col items-start gap-8 text-lg">
-        <img src="<?php echo $product['img'] ?? 'assets/burger.png' ?>" alt="<?php echo htmlspecialchars($product['name']) ?>" class="w-full">
+        <img src="<?php echo $product['img'] ?? 'assets/burger.png' ?>" alt="<?php echo htmlspecialchars($product['name']) ?>" class="w-70 h-70 rounded-lg">
         <h1>ID: <?php echo htmlspecialchars($product['id']) ?></h1>
         <h2>name of the product: <?php echo htmlspecialchars($product['name']) ?></h2>
         <h2>price of the product: <?php echo htmlspecialchars($product['price']) ?>$</h2>
@@ -123,7 +123,7 @@ require 'utils/not-found/details-not-found.php'
         class="w-full"
         onmouseover="document.getElementById('notAllowedImg').classList.toggle('hidden')"
         onmouseout="document.getElementById('notAllowedImg').classList.toggle('hidden')">
-        <img src="<?php echo $product['img'] ?? 'assets/burger.png' ?>" alt="<?php echo htmlspecialchars($product['name']) ?>" class="w-full" />
+        <img src="<?php echo $product['img'] ?? 'assets/burger.png' ?>" alt="<?php echo htmlspecialchars($product['name']) ?>" class="w-70 h-70 rounded-lg" />
         <p class="text-sm text-red-500 hidden" id="notAllowedImg">the img is not allowed to be changed</p>
       </div>
       <div

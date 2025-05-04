@@ -5,4 +5,4 @@ if ($_SESSION['role'] !== "owner") {
         </div>";
   header('Refresh: 5; url=index.php');
   die;
-}
+} 
