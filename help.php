@@ -31,15 +31,15 @@
             </li>
         </ul>
         <ul class="list-disc mb-4">
-        <h3 class="text-xl font-semibold">How to checkout your order:</h3>
+        <h3 class="text-xl font-semibold">Having Technical Isuues?:</h3>
             <li>
-                From the cart where there will be your order select "Checkout". 
+                Try Refreshing Page. 
             </li>
             <li>
-                Then click on "confirm Order" to complete the process.
+                Check your connection.
             </li>
             <li>
-                And your order is done successfully.
+                If issue is still not solved plese <span class="font-bold text-xl underline text-amber-600"><a href="contact.php">contact us</a></span>.
             </li>
         </ul>
     </div>
